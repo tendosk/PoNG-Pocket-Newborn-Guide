@@ -518,25 +518,79 @@ function EquipmentEstimates({ onBack }) {
 // ═══════════════════════════════════════════════════════════════════════
 function ResuscMeds({ onBack }) {
   const t = useT(); const s = useS();
-  const meds = [
-    { name: "Epinephrine (1:10,000)", route: "IV (UVC)", dose: "0.01–0.03 mg/kg", vol: "0.1–0.3 mL/kg", note: "Rapid push. Repeat q3–5 min. Flush 0.5–1 mL NS.", c: t.red },
-    { name: "Epinephrine (1:10,000)", route: "ET", dose: "0.05–0.1 mg/kg", vol: "0.5–1 mL/kg", note: "Higher ET dose. Follow with PPV. Switch to IV ASAP.", c: t.red },
-    { name: "Normal Saline 0.9%", route: "IV (UVC)", dose: "10 mL/kg", vol: "10 mL/kg", note: "Volume expansion. Give over 5–10 min. May repeat.", c: t.acc },
-  ];
+  const wts = ["0.5 kg", "1 kg", "2 kg", "3 kg", "4 kg"];
+  const thC = { ...s.tH, fontSize: 10, padding: "8px 5px" };
+  const tdC = { ...s.tC, fontSize: 11, padding: "7px 5px", lineHeight: 1.4 };
+  const tdH = { ...tdC, fontWeight: 700, textAlign: "left", paddingLeft: 8, background: t.mode === "dark" ? t.bg3 + "80" : "#F1F5F9" };
   return (
     <Page title="Resuscitation Meds" onBack={onBack}>
-      <div style={{ ...s.info(t.red), marginTop: 14 }}><strong>Prepare in advance for high-risk deliveries.</strong></div>
-      {meds.map((m,i) => (
-        <div key={i} style={{ ...s.card, marginTop: 8, borderLeft: `4px solid ${m.c}` }}>
-          <div style={{ fontWeight: 700, fontSize: 14, color: m.c }}>{m.name}</div>
-          <div style={{ fontSize: 11, color: t.text3, marginBottom: 6 }}>Route: {m.route}</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, fontSize: 12 }}>
-            <div><span style={{ color: t.text3, fontSize: 10 }}>Dose</span><br/><strong>{m.dose}</strong></div>
-            <div><span style={{ color: t.text3, fontSize: 10 }}>Volume</span><br/><strong>{m.vol}</strong></div>
-          </div>
-          <div style={{ marginTop: 6, fontSize: 11, color: t.text2, fontStyle: "italic" }}>{m.note}</div>
+      <div style={{ ...s.secT, marginTop: 14 }}>Epinephrine IV/IO</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
+        <div style={{ padding: "10px 14px", background: t.mode === "dark" ? t.red + "20" : "#FEF2F2", borderBottom: `1px solid ${t.border}` }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: t.red }}>Dose: 0.02 mg/kg (= 0.2 mL/kg)</div>
+          <div style={{ fontSize: 11, color: t.text2, marginTop: 2 }}>Concentration: 0.1 mg/mL (1 mg/10 mL)</div>
         </div>
-      ))}
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 360 }}>
+            <thead><tr><th style={thC}></th>{wts.map(w => <th key={w} style={thC}>{w}</th>)}</tr></thead>
+            <tbody>
+              <tr><td style={tdH}>IV Dose</td><td style={tdC}>0.01 mg</td><td style={tdC}>0.02 mg</td><td style={{ ...tdC, background: t.mode === "dark" ? t.ylw + "15" : "#FFFBEB" }}>0.04 mg</td><td style={{ ...tdC, background: t.mode === "dark" ? t.pnk + "15" : "#FFF1F2" }}>0.06 mg</td><td style={{ ...tdC, background: t.mode === "dark" ? t.red + "15" : "#FEF2F2" }}>0.08 mg</td></tr>
+              <tr><td style={tdH}>Volume</td><td style={tdC}>0.1 mL</td><td style={tdC}>0.2 mL</td><td style={{ ...tdC, background: t.mode === "dark" ? t.ylw + "15" : "#FFFBEB" }}>0.4 mL</td><td style={{ ...tdC, background: t.mode === "dark" ? t.pnk + "15" : "#FFF1F2" }}>0.6 mL</td><td style={{ ...tdC, background: t.mode === "dark" ? t.red + "15" : "#FEF2F2" }}>0.8 mL</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{ padding: "10px 14px", fontSize: 11, color: t.text2, borderTop: `1px solid ${t.border}`, lineHeight: 1.6 }}>
+          <strong style={{ color: t.text }}>Administration:</strong> IV/IO rapid push. Flush with 3 mL NS. Repeat every 3–5 minutes if heart rate less than 60 bpm.
+        </div>
+      </div>
+
+      {/* Epinephrine ETT */}
+      <div style={s.secT}>Epinephrine ETT</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
+        <div style={{ padding: "10px 14px", background: t.mode === "dark" ? t.org + "20" : "#FFFBEB", borderBottom: `1px solid ${t.border}` }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: t.org }}>Dose: 0.1 mg/kg (= 1 mL/kg)</div>
+          <div style={{ fontSize: 11, color: t.text2, marginTop: 2 }}>Concentration: 0.1 mg/mL (1 mg/10 mL)</div>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 360 }}>
+            <thead><tr><th style={thC}></th>{wts.map(w => <th key={w} style={thC}>{w}</th>)}</tr></thead>
+            <tbody>
+              <tr><td style={tdH}>ET Dose</td><td style={tdC}>0.05 mg</td><td style={tdC}>0.1 mg</td><td style={{ ...tdC, background: t.mode === "dark" ? t.ylw + "15" : "#FFFBEB" }}>0.2 mg</td><td style={{ ...tdC, background: t.mode === "dark" ? t.pnk + "15" : "#FFF1F2" }}>0.3 mg</td><td style={{ ...tdC, background: t.mode === "dark" ? t.red + "15" : "#FEF2F2" }}>0.4 mg</td></tr>
+              <tr><td style={tdH}>Volume</td><td style={tdC}>0.5 mL</td><td style={tdC}>1 mL</td><td style={{ ...tdC, background: t.mode === "dark" ? t.ylw + "15" : "#FFFBEB" }}>2 mL</td><td style={{ ...tdC, background: t.mode === "dark" ? t.pnk + "15" : "#FFF1F2" }}>3 mL</td><td style={{ ...tdC, background: t.mode === "dark" ? t.red + "15" : "#FEF2F2" }}>4 mL</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{ padding: "10px 14px", fontSize: 11, color: t.text2, borderTop: `1px solid ${t.border}`, lineHeight: 1.6 }}>
+          <strong style={{ color: t.text }}>Administration:</strong> May administer while vascular access is being established. ETT rapid push. No need for flush. Provide PPV breaths to distribute into lungs.
+        </div>
+      </div>
+
+      {/* Normal Saline */}
+      <div style={s.secT}>Normal Saline IV</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
+        <div style={{ padding: "10px 14px", background: t.mode === "dark" ? t.acc + "20" : "#EFF6FF", borderBottom: `1px solid ${t.border}` }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: t.acc }}>Dose: 10 mL/kg — 0.9% NaCl</div>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 360 }}>
+            <thead><tr><th style={thC}></th>{wts.map(w => <th key={w} style={thC}>{w}</th>)}</tr></thead>
+            <tbody>
+              <tr><td style={tdH}>Volume</td><td style={tdC}>5 mL IV</td><td style={tdC}>10 mL IV</td><td style={{ ...tdC, background: t.mode === "dark" ? t.ylw + "15" : "#FFFBEB" }}>20 mL IV</td><td style={{ ...tdC, background: t.mode === "dark" ? t.pnk + "15" : "#FFF1F2" }}>30 mL IV</td><td style={{ ...tdC, background: t.mode === "dark" ? t.red + "15" : "#FEF2F2" }}>40 mL IV</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{ padding: "10px 14px", fontSize: 11, color: t.text2, borderTop: `1px solid ${t.border}`, lineHeight: 1.6 }}>
+          <strong style={{ color: t.text }}>Administration:</strong> Give over 5–10 min.
+        </div>
+      </div>
+
+      {/* Footnotes */}
+      <div style={{ ...s.card, marginTop: 16, fontSize: 10, lineHeight: 1.7, color: t.text3 }}>
+        <div>*IV/IO recommended dose range: 0.01–0.03 mg/kg (= 0.1–0.3 mL/kg).</div>
+        <div style={{ marginTop: 4 }}>*ETT recommended dose range: 0.05–0.1 mg/kg (= 0.5–1 mL/kg).</div>
+        <div style={{ marginTop: 6, fontStyle: "italic" }}>These suggested epinephrine doses are based on a desire to simplify dosing for educational efficiency and do not endorse any particular dose within the recommended dosing range.</div>
+        <div style={{ marginTop: 6, fontWeight: 600, color: t.text2 }}>Source: NRP 8th Edition Code Medications Card</div>
+      </div>
     </Page>
   );
 }
