@@ -1,4 +1,4 @@
-import { useState, useCallback, createContext, useContext, useEffect, useRef } from "react";
+import { useState, useCallback, createContext, useContext, useEffect, useRef, Fragment } from "react";
 import {
   Baby, Heart, Frown, Dumbbell, Wind, Hospital, Link2, ClipboardList, Settings,
   Syringe, Thermometer, Pill, FlaskConical, Stethoscope, Scale, BarChart3,
@@ -6,7 +6,7 @@ import {
   Sun, Moon, Monitor, Eye, Ear, Milk, FileText, LineChart, HandHeart,
   HeartPulse, Droplets, CircleDot, Zap, BookOpen, Ribbon, PersonStanding,
   ClipboardCheck, TrendingUp, TestTubes, Waves, Sparkles, AlertTriangle,
-  Search, X
+  Search, X, ChevronLeft
 } from "lucide-react";
 
 // ─── Theme System ────────────────────────────────────────────────────
@@ -57,7 +57,7 @@ const mkS = (t) => ({
   hdr: { background: t.hdrGrad, color: t.mode === "dark" ? "#F8FAFC" : "#0F172A", padding: "60px 20px 16px", position: "sticky", top: 0, zIndex: 100, backdropFilter: "blur(20px)" },
   hdrT: { fontSize: 28, fontWeight: 800, letterSpacing: -0.5, fontFamily: '"Poppins", sans-serif', textShadow: t.mode === "dark" ? "0 0 20px rgba(96,165,250,0.4), 0 0 40px rgba(96,165,250,0.15)" : "none" },
   hdrS: { fontSize: 11, opacity: 0.6, marginTop: 2, fontWeight: 400 },
-  back: { background: t.mode === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)", backdropFilter: "blur(10px)", border: t.mode === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)", color: t.mode === "dark" ? "#F8FAFC" : "#334155", fontSize: 13, padding: "6px 12px", borderRadius: 10, cursor: "pointer", marginBottom: 8, display: "flex", alignItems: "center", gap: 4, fontWeight: 500 },
+  back: { background: t.mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)", border: "none", color: t.mode === "dark" ? "#F8FAFC" : "#334155", width: 38, height: 38, borderRadius: 12, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, flexShrink: 0 },
   card: { background: t.cardBg, backdropFilter: "blur(16px)", borderRadius: 16, padding: "16px 18px", margin: "0 16px 10px", boxShadow: t.shadow, border: `1px solid ${t.border}` },
   secT: { fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: t.text3, margin: "20px 20px 10px", fontFamily: '"Poppins", sans-serif' },
   mi: { display: "flex", alignItems: "center", padding: "14px 18px", background: t.surfaceSolid, borderBottom: `1px solid ${t.border}`, cursor: "pointer", gap: 14, transition: "background 0.15s" },
@@ -66,8 +66,8 @@ const mkS = (t) => ({
   mDs: { fontSize: 11, color: t.text2, marginTop: 2 },
   chv: { marginLeft: "auto", color: t.text3, fontSize: 16, opacity: 0.5 },
   pill: { display: "inline-block", padding: "7px 14px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "none", transition: "all 0.2s ease" },
-  tH: { background: t.mode === "dark" ? t.bg3 : "#0F172A", color: "#F8FAFC", fontWeight: 600, fontSize: 11, padding: "10px 8px", textAlign: "center" },
-  tC: { padding: "10px 8px", textAlign: "center", fontSize: 12, borderBottom: `1px solid ${t.border}`, color: t.text },
+  tH: { background: t.mode === "dark" ? t.bg3 : "#0F172A", color: "#F8FAFC", fontWeight: 600, fontSize: 11, padding: "10px 8px", textAlign: "center", borderRight: `1px solid ${t.mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.2)"}` },
+  tC: { padding: "10px 8px", textAlign: "center", fontSize: 12, borderBottom: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`, color: t.text },
   cnt: { paddingBottom: 90 },
   info: (accent) => ({ background: t.mode === "dark" ? `${accent}15` : `${accent}12`, border: `1px solid ${accent}30`, borderRadius: 14, padding: "14px 16px", margin: "0 16px 10px", fontSize: 12, lineHeight: 1.6, color: t.text }),
   sBdg: (bg, c) => ({ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 12, background: bg, color: c, fontSize: 18, fontWeight: 800, cursor: "pointer", border: "none", transition: "all 0.2s" }),
@@ -97,10 +97,21 @@ function Page({ title, sub, onBack, children }) {
   const t = useT(); const s = mkS(t);
   return (
     <div>
-      <div style={{ ...s.hdr, paddingTop: onBack ? 56 : 92 }}>
-        {onBack && <button style={s.back} onClick={onBack}>← Back</button>}
-        <div style={s.hdrT}>{title}</div>
-        {sub && <div style={s.hdrS}>{sub}</div>}
+      <div style={{ ...s.hdr, paddingTop: onBack ? 76 : 92 }}>
+        {onBack ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button style={s.back} onClick={onBack}><ChevronLeft size={20} strokeWidth={2.5} /></button>
+            <div>
+              <div style={s.hdrT}>{title}</div>
+              {sub && <div style={s.hdrS}>{sub}</div>}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={s.hdrT}>{title}</div>
+            {sub && <div style={s.hdrS}>{sub}</div>}
+          </>
+        )}
       </div>
       <div style={s.cnt}>{children}</div>
     </div>
@@ -232,14 +243,20 @@ const APGAR = [
   { name: "Respirations", sub: "(Breathing)", icon: <Wind size={18} />, opts: [{ s: 0, l: "Absent" }, { s: 1, l: "Slow, irregular, weak cry" }, { s: 2, l: "Good cry, regular" }] },
 ];
 
-function ApgarTool({ onBack }) {
+function ApgarTool({ onBack, scrollRef }) {
   const t = useT(); const s = useS();
   const [scores, setScores] = useState({});
   const [tp, setTp] = useState("1min");
   const cur = scores[tp] || {};
   const total = Object.values(cur).reduce((a, b) => a + b, 0);
   const done = Object.keys(cur).length === 5;
-  const interp = done ? (total >= 7 ? { tx: "Normal", c: t.grn, bg: t.grnL } : total >= 4 ? { tx: "Moderately abnormal", c: t.org, bg: t.orgL } : { tx: "Low – resuscitation needed", c: t.red, bg: t.redL }) : null;
+  const interp = done ? (total >= 7 ? { c: t.grn, bg: t.grnL } : total >= 4 ? { c: t.org, bg: t.orgL } : { c: t.red, bg: t.redL }) : null;
+  const wasDone = useRef(false);
+  useEffect(() => {
+    if (done && !wasDone.current && scrollRef?.current) scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    wasDone.current = done;
+  }, [done]);
+  useEffect(() => { wasDone.current = false; }, [tp]);
   const tps = [{ k: "1min", l: "1 min" }, { k: "5min", l: "5 min" }, { k: "10min", l: "10 min" }];
 
   return (
@@ -249,7 +266,8 @@ function ApgarTool({ onBack }) {
           return <button key={x.k} onClick={() => setTp(x.k)} style={{ ...s.pill, flex: 1, textAlign: "center", background: tp === x.k ? t.acc : t.surfaceSolid, color: tp === x.k ? "#fff" : t.text, boxShadow: tp === x.k ? `0 4px 12px ${t.acc}40` : s.shadow }}>{x.l}{c && <span style={{ marginLeft: 4, fontWeight: 800 }}>{tot}</span>}</button>;
         })}
       </div>
-      {done && interp && <div style={{ ...s.card, background: interp.bg, textAlign: "center", marginTop: 8 }}><div style={{ fontSize: 42, fontWeight: 800, color: interp.c }}>{total}</div><div style={{ fontSize: 11, fontWeight: 600, color: interp.c }}>{interp.tx}</div></div>}
+      {done && interp && <div style={{ ...s.card, background: interp.bg, textAlign: "center", marginTop: 8 }}><div style={{ fontSize: 42, fontWeight: 800, color: interp.c }}>{total}</div></div>}
+      {tp === "10min" && <div style={{ ...s.info(t.org), marginTop: 8 }}>A 10-minute Apgar score is needed if the 5-minute score is less than 7. Repeat every 5 minutes until 20 minutes if the score remains less than 7.</div>}
       {APGAR.map(cr => (
         <div key={cr.name} style={{ ...s.card, marginTop: 8 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}><div style={{ color: t.acc, display: "flex" }}>{cr.icon}</div><div><div style={{ fontWeight: 700, fontSize: 15 }}>{cr.name}</div><div style={{ fontSize: 10, color: t.text3 }}>{cr.sub}</div></div></div>
@@ -330,14 +348,14 @@ function FentonTable({ onBack }) {
             <tbody>
               {data.map(([ga,fS,fL,mS,mL], i) => (
                 <tr key={ga} style={{ background: i % 2 === 0 ? t.surfaceSolid : t.bg3 }}>
-                  <td style={{ ...s.tC, fontWeight: 700 }}>{ga}</td><td style={s.tC}>{fS}</td><td style={s.tC}>{fL}</td><td style={s.tC}>{mS}</td><td style={s.tC}>{mL}</td>
+                  <td style={{ ...s.tC, fontWeight: 700, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{ga}</td><td style={{ ...s.tC, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{fS}</td><td style={{ ...s.tC, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{fL}</td><td style={{ ...s.tC, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{mS}</td><td style={{ ...s.tC, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{mL}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
-      <div style={s.info(t.grn)}><strong>Note:</strong> For infants &lt; 37.0 weeks, screen all infants regardless of weight.</div>
+      <div style={{ padding: "12px 16px" }}><a href="https://peditools.org/fenton2025/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: t.grnL, color: t.grn, fontWeight: 600, fontSize: 13, textDecoration: "none" }}><TrendingUp size={16} /> Fenton 2025 Calculator — PediTools</a></div>
     </Page>
   );
 }
@@ -347,10 +365,23 @@ function FentonTable({ onBack }) {
 // ═══════════════════════════════════════════════════════════════════════
 function GlucoseProtocol({ onBack }) {
   const t = useT(); const s = useS();
-  const [tab, setTab] = useState("pathway");
-  const tabs = [{ k: "pathway", l: "Pathways" }, { k: "criteria", l: "Criteria" }, { k: "dosing", l: "Dosing" }, { k: "sx", l: "Symptoms" }];
+  const [tab, setTab] = useState("criteria");
+  const tabs = [{ k: "criteria", l: "Criteria" }, { k: "pathway", l: "Pathway" }, { k: "dosing", l: "Dosing" }, { k: "sx", l: "Symptoms" }];
+  const [showPdf, setShowPdf] = useState(null);
   return (
     <Page title="Blood Glucose Screening" onBack={onBack}>
+      {showPdf && <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0.85)", display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "54px 16px 10px" }}>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setShowPdf(1)} style={{ ...s.pill, fontSize: 12, background: showPdf === 1 ? t.pur : "rgba(255,255,255,0.15)", color: "#fff", border: "none" }}>Page 1</button>
+            <button onClick={() => setShowPdf(2)} style={{ ...s.pill, fontSize: 12, background: showPdf === 2 ? t.pur : "rgba(255,255,255,0.15)", color: "#fff", border: "none" }}>Page 2</button>
+          </div>
+          <button onClick={() => setShowPdf(null)} style={{ background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={18} /></button>
+        </div>
+        <div style={{ flex: 1, overflow: "auto", padding: "0 8px 20px", WebkitOverflowScrolling: "touch" }}>
+          <img src={`/glucose-protocol-p${showPdf}.png`} alt={`Protocol page ${showPdf}`} style={{ width: "100%", borderRadius: 8 }} />
+        </div>
+      </div>}
       <div style={{ display: "flex", gap: 6, padding: "14px 16px 4px" }}>
         {tabs.map(x => <button key={x.k} onClick={() => setTab(x.k)} style={{ ...s.pill, flex: 1, textAlign: "center", fontSize: 11, background: tab === x.k ? t.pur : t.surfaceSolid, color: tab === x.k ? "#fff" : t.text, boxShadow: tab === x.k ? `0 4px 12px ${t.pur}40` : "none" }}>{x.l}</button>)}
       </div>
@@ -360,6 +391,7 @@ function GlucoseProtocol({ onBack }) {
         <div style={s.secT}>Completion</div><div style={s.card}><div style={{ fontWeight: 700, fontSize: 12, color: t.pur, marginBottom: 4 }}>LGA / IDM:</div><div style={{ fontSize: 12 }}>≥ <strong>12 hrs</strong> AND 3 consecutive AC ≥ 45</div><div style={{ borderTop: `1px solid ${t.border}`, margin: "10px 0", paddingTop: 10 }}><div style={{ fontWeight: 700, fontSize: 12, color: t.pur, marginBottom: 4 }}>SGA / Late preterm:</div><div style={{ fontSize: 12 }}>≥ <strong>24 hrs</strong> AND 3 consecutive AC ≥ 45</div></div></div>
       </div>}
       {tab === "pathway" && <div>
+        <div style={{ padding: "12px 16px 0" }}><button onClick={() => setShowPdf(1)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.pur}12`, border: `1px solid ${t.pur}30`, color: t.pur, fontWeight: 600, fontSize: 13, cursor: "pointer" }}><FileText size={16} /> View Protocol PDF</button></div>
         <div style={s.secT}>Path A: First Feed</div>
         <div style={s.card}><div style={{ fontSize: 12, lineHeight: 1.8 }}>• Feed within 1 hr of birth<br/>• POC glucose <strong>30 min AFTER</strong> feed (≤ 90 min)</div>
           <div style={{ marginTop: 10, padding: 12, background: t.redL, borderRadius: 12 }}><div style={{ fontWeight: 700, fontSize: 12, color: t.red }}>If &lt; 35:</div><div style={{ fontSize: 11, lineHeight: 1.7, marginTop: 3 }}>Glucose gel → feed → STS → notify MD → recheck 1 hr</div></div>
@@ -377,7 +409,7 @@ function GlucoseProtocol({ onBack }) {
         <div style={s.info(t.pur)}><strong>0.5 mL/kg</strong> buccal mucosa prior to feeding. Round UP to nearest 0.5 kg.</div>
         <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}><thead><tr><th style={s.tH}>Weight</th><th style={s.tH}>Dose</th></tr></thead><tbody>
-            {[["2 kg","1 mL"],["2.5 kg","1.25 mL"],["3 kg","1.5 mL"],["3.5 kg","1.75 mL"],["4 kg","2 mL"],["4.5 kg","2.25 mL"]].map(([w,d],i) => <tr key={w} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600 }}>{w}</td><td style={s.tC}>{d}</td></tr>)}
+            {[["2 kg","1 mL"],["2.5 kg","1.25 mL"],["3 kg","1.5 mL"],["3.5 kg","1.75 mL"],["4 kg","2 mL"],["4.5 kg","2.25 mL"]].map(([w,d],i) => <tr key={w} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{w}</td><td style={{ ...s.tC, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{d}</td></tr>)}
           </tbody></table>
         </div>
         <div style={s.secT}>Feeds</div><div style={s.card}><div style={{ fontSize: 12, lineHeight: 1.7 }}>Breastfeeding preferred. If unavailable, ≥5 mL donor milk or formula (verbal consent).</div></div>
@@ -420,16 +452,17 @@ function VitalSigns({ onBack }) {
   const t = useT(); const s = useS();
   return (
     <Page title="Vital Signs" onBack={onBack}>
-      <div style={{ ...s.card, padding: 0, overflow: "hidden", marginTop: 14 }}>
+      <div style={s.secT}>Normal Newborn Vitals</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}><thead><tr><th style={s.tH}>Parameter</th><th style={s.tH}>Normal</th></tr></thead><tbody>
-          {[["Heart Rate","100–160 bpm"],["Respiratory Rate","30–60/min"],["Temp (axillary)","36.5–37.5°C"],["SpO2 (preductal)","≥95% by 10 min"],["BP (term)","60–80/35–55"],["MAP","≈ GA (wks)"]].map(([p,v],i) => <tr key={p} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600, textAlign: "left", paddingLeft: 14 }}>{p}</td><td style={s.tC}>{v}</td></tr>)}
+          {[["Heart Rate","100–160 bpm"],["Respiratory Rate","30–60/min"],["Temp (axillary)","36.5–37.5°C"],["SpO2 (preductal)","≥95% after 10 min"],["BP (term)","60–80/35–55"],["MAP","≈ GA (wks)"]].map(([p,v],i) => <tr key={p} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600, textAlign: "left", paddingLeft: 14 }}>{p}</td><td style={s.tC}>{v}</td></tr>)}
         </tbody></table>
       </div>
-      <div style={s.secT}>Pre/Post-ductal SpO2</div><div style={s.card}><div style={{ fontSize: 12, lineHeight: 1.7 }}><strong>Pre:</strong> Right hand · <strong>Post:</strong> Either foot<br/>Difference &gt;3% → R-to-L shunt through PDA</div></div>
       <div style={s.secT}>Target SpO2 After Birth</div>
       <div style={{ ...s.card, padding: 0, overflow: "hidden" }}><table style={{ width: "100%", borderCollapse: "collapse" }}><thead><tr><th style={s.tH}>Time</th><th style={s.tH}>SpO2</th></tr></thead><tbody>
         {[["1 min","60–65%"],["2 min","65–70%"],["3 min","70–75%"],["4 min","75–80%"],["5 min","80–85%"],["10 min","85–95%"]].map(([x,v],i) => <tr key={x} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600 }}>{x}</td><td style={s.tC}>{v}</td></tr>)}
       </tbody></table></div>
+      <div style={s.secT}>Pre/Post-ductal SpO2</div><div style={s.card}><div style={{ fontSize: 12, lineHeight: 1.7 }}><strong>Pre:</strong> Right hand · <strong>Post:</strong> Either foot<br/>Difference &gt;3% → R-to-L shunt through PDA</div></div>
     </Page>
   );
 }
@@ -448,13 +481,15 @@ function NRPAlgorithm({ onBack }) {
   ];
   return (
     <Page title="NRP Algorithm" onBack={onBack}>
-      <div style={{ ...s.info(t.org), marginTop: 14 }}><strong>MR SOPA:</strong> Mask · Reposition · Suction · Open mouth · Pressure ↑ · Airway alternative</div>
       {steps.map(x => (
-        <div key={x.n} style={{ ...s.card, marginTop: 8, borderLeft: `4px solid ${x.color}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}><span style={{ width: 28, height: 28, borderRadius: "50%", background: x.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, flexShrink: 0 }}>{x.n}</span><div style={{ fontWeight: 700, fontSize: 14, color: x.color }}>{x.title}</div></div>
-          <div style={{ fontSize: 12, color: t.text2, marginBottom: 4 }}>{x.desc}</div>
-          <div style={{ fontSize: 12, fontWeight: 500, lineHeight: 1.6 }}>{x.action}</div>
-        </div>
+        <Fragment key={x.n}>
+          <div style={{ ...s.card, marginTop: 8, borderLeft: `4px solid ${x.color}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}><span style={{ width: 28, height: 28, borderRadius: "50%", background: x.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 12, flexShrink: 0 }}>{x.n}</span><div style={{ fontWeight: 700, fontSize: 14, color: x.color }}>{x.title}</div></div>
+            <div style={{ fontSize: 12, color: t.text2, marginBottom: 4 }}>{x.desc}</div>
+            <div style={{ fontSize: 12, fontWeight: 500, lineHeight: 1.6 }}>{x.action}</div>
+          </div>
+          {x.n === 3 && <div style={{ ...s.info(t.org), marginTop: 8 }}><strong>MR SOPA:</strong> Mask · Reposition · Suction · Open mouth · Pressure ↑ · Airway alternative</div>}
+        </Fragment>
       ))}
       <div style={s.secT}>Cord Clamping</div><div style={s.card}><div style={{ fontSize: 12, lineHeight: 1.7 }}>Delay ≥30–60s for vigorous infants.</div></div>
     </Page>
@@ -470,7 +505,7 @@ function EquipmentEstimates({ onBack }) {
     <Page title="Equipment Estimates" onBack={onBack}>
       <div style={{ ...s.card, padding: 0, overflow: "hidden", marginTop: 14 }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}><thead><tr><th style={s.tH}>GA</th><th style={s.tH}>Wt (g)</th><th style={s.tH}>ETT</th><th style={s.tH}>Depth</th></tr></thead><tbody>
-          {[["23–24","500–600","2.5","5.5"],["25–26","700–800","2.5","6.0"],["27–29","900–1000","2.5","6.5"],["30–32","1100–1400","2.5–3.0","7.0"],["33–34","1500–1800","3.0","7.5"],["35–37","1800–2500","3.0–3.5","8.0"],["38–40","2500–3100","3.5","8.5"],[">40",">3100","3.5–4.0","9.0"]].map(([g,w,e,d],i) => <tr key={g} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600 }}>{g}</td><td style={s.tC}>{w}</td><td style={{ ...s.tC, fontWeight: 700, color: t.acc }}>{e}</td><td style={{ ...s.tC, fontWeight: 700, color: t.org }}>{d}</td></tr>)}
+          {[["23–24","500–600","2.5","5.5"],["25–26","700–800","2.5","6.0"],["27–29","900–1000","2.5","6.5"],["30–32","1100–1400","2.5–3.0","7.0"],["33–34","1500–1800","3.0","7.5"],["35–37","1800–2500","3.0–3.5","8.0"],["38–40","2500–3100","3.5","8.5"],[">40",">3100","3.5–4.0","9.0"]].map(([g,w,e,d],i) => <tr key={g} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{g}</td><td style={{ ...s.tC, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{w}</td><td style={{ ...s.tC, fontWeight: 700, color: t.acc, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{e}</td><td style={{ ...s.tC, fontWeight: 700, color: t.org, ...(i === 0 && { borderTop: `1px solid ${t.border}` }) }}>{d}</td></tr>)}
         </tbody></table>
       </div>
       <div style={s.secT}>Formulas</div><div style={s.card}><div style={{ fontSize: 12, lineHeight: 1.8 }}><strong>Lip-to-tip:</strong> Wt (kg) + 6<br/><strong>Nasal:</strong> Wt (kg) + 7<br/><strong>Blade:</strong> Miller 0 (preterm), Miller 1 (term)</div></div>
@@ -806,7 +841,7 @@ function OptionsTab({ themeMode, setThemeMode }) {
 // ═══════════════════════════════════════════════════════════════════════
 function NewbornHome({ onNav }) {
   const t = useT(); const s = useS();
-  const quick = [{ id: "vitals", label: "Vitals", icon: <HeartPulse size={18} />, color: t.red },{ id: "apgar", label: "APGAR", icon: <ClipboardCheck size={18} />, color: t.acc },{ id: "fenton", label: "Fenton 2025", icon: <TrendingUp size={18} />, color: t.grn },{ id: "glucose", label: "Hypoglycemia", icon: <Droplets size={18} />, color: t.pur }];
+  const quick = [{ id: "vitals", label: "Vitals", icon: <HeartPulse size={18} />, color: t.red },{ id: "apgar", label: "APGAR", icon: <ClipboardCheck size={18} />, color: t.acc },{ id: "fenton", label: "Fenton 2025", icon: <TrendingUp size={18} />, color: t.grn },{ id: "glucose", label: "Glucose Screening", icon: <Droplets size={18} />, color: t.pur }];
   const items = [
     { id: "delivery", label: "Delivery & NRP", desc: "APGAR, NRP, equipment", icon: <Hospital size={18} />, color: t.acc },
     { id: "routine", label: "Routine Care", desc: "Maternal factors, meds, screenings", icon: <Baby size={18} />, color: t.grn },
@@ -829,7 +864,7 @@ function NewbornHome({ onNav }) {
         <div style={s.secT}>Quick Tools</div>
         <div style={{ display: "flex", gap: 10, padding: "0 16px", overflowX: "auto" }}>
           {quick.map(q => (
-            <div key={q.id} onClick={() => onNav(q.id)} style={{ minWidth: 80, textAlign: "center", cursor: "pointer", padding: "14px 10px", borderRadius: 16, background: t.cardBg, backdropFilter: "blur(10px)", border: `1px solid ${t.border}`, boxShadow: s.shadow, transition: "transform 0.15s" }}>
+            <div key={q.id} onClick={() => onNav(q.id)} style={{ flex: 1, minWidth: 0, textAlign: "center", cursor: "pointer", padding: "14px 10px", borderRadius: 16, background: t.cardBg, backdropFilter: "blur(10px)", border: `1px solid ${t.border}`, boxShadow: s.shadow, transition: "transform 0.15s" }}>
               <div style={{ width: 44, height: 44, borderRadius: 12, background: `${q.color}18`, color: q.color, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px" }}>{q.icon}</div>
               <div style={{ fontSize: 11, fontWeight: 600 }}>{q.label}</div>
             </div>
@@ -965,7 +1000,7 @@ export default function NewbornPocketPro() {
 
   const renderContent = () => {
     const p = currentPage;
-    if (p === "apgar") return <ApgarTool onBack={goBack} />;
+    if (p === "apgar") return <ApgarTool onBack={goBack} scrollRef={scrollRef} />;
     if (p === "sarnat") return <SarnatTool onBack={goBack} />;
     if (p === "fenton") return <FentonTable onBack={goBack} />;
     if (p === "glucose") return <GlucoseProtocol onBack={goBack} />;
