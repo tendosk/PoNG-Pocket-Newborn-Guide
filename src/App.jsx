@@ -144,7 +144,8 @@ const SEARCH_INDEX = [
   { id: "feeding", label: "Feeding", desc: "Breastfeeding donor milk formula lactation latch colostrum", section: "Routine Care" },
   { id: "voiding", label: "Voiding & Stooling", desc: "Wet diapers meconium stool patterns day of life", section: "Routine Care" },
   { id: "bilirubin", label: "Bilirubin", desc: "Jaundice hyperbilirubinemia phototherapy screening nomogram", section: "Routine Care" },
-  { id: "hearing", label: "Hearing / CMV", desc: "Hearing screen CMV cytomegalovirus follow-up ABR", section: "Routine Care" },
+  { id: "hearing", label: "Hearing Screen", desc: "Hearing screen follow-up ABR OAE audiology", section: "Routine Care" },
+  { id: "additional_screenings", label: "Additional Screenings", desc: "CMV cytomegalovirus pelviectasis hydronephrosis renal ultrasound VCUG", section: "Routine Care" },
   { id: "cchd", label: "CCHD Screening", desc: "Critical congenital heart disease pulse oximetry SpO2", section: "Routine Care" },
   { id: "nbs", label: "Newborn Screen", desc: "Metabolic genetic screening PKU thyroid sickle cell", section: "Routine Care" },
   // Delivery sub-pages
@@ -592,27 +593,16 @@ function ResuscMeds({ onBack }) {
 // ═══════════════════════════════════════════════════════════════════════
 function EOSSection({ onBack }) {
   const t = useT(); const s = useS();
-  const [tab, setTab] = useState("risk");
   return (
     <Page title="Early Onset Sepsis" onBack={onBack}>
-      <div style={{ display: "flex", gap: 6, padding: "14px 16px 4px" }}>
-        {[{ k:"risk",l:"Risk Factors" },{ k:"approach",l:"Approaches" },{ k:"abx",l:"Antibiotics" }].map(x => <button key={x.k} onClick={() => setTab(x.k)} style={{ ...s.pill, flex: 1, textAlign: "center", fontSize: s.sz(10), background: tab===x.k?t.tea:t.surfaceSolid, color: tab===x.k?"#fff":t.text, boxShadow: tab===x.k?`0 4px 12px ${t.tea}40`:"none" }}>{x.l}</button>)}
-      </div>
-      {tab === "risk" && <div>
-        <div style={s.secT}>Maternal</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Fever ≥38.0°C / chorioamnionitis<br/>• GBS (+) + inadequate IAP<br/>• ROM ≥18 hrs<br/>• Preterm labor<br/>• Prior GBS infant</div></div>
-        <div style={s.secT}>Neonatal</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Prematurity<br/>• VLBW<br/>• Fetal tachycardia<br/>• MSAF<br/>• APGAR 0–3 at 5 min</div></div>
-        <div style={s.secT}>Labs</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• WBC &lt;5,000 → concerning<br/>• I:T &gt;0.3 → concerning<br/>• Blood culture = gold standard</div></div>
-      </div>}
-      {tab === "approach" && <div>
-        <div style={s.secT}>Three AAP Approaches</div>
-        {[{ n:"1. Categorical Risk",d:"Threshold algorithm. Any risk factor crossed → observation or abx." },{ n:"2. Multivariate (Sepsis Calc)",d:"Kaiser calculator. Uses GA, temp, GBS, ROM, IAP to estimate risk/1000." },{ n:"3. Clinical Observation",d:"Serial exams regardless of risk. Treat only if signs develop." }].map(a => <div key={a.n} style={{ ...s.card, marginTop: 6 }}><div style={{ fontWeight: 700, fontSize: s.sz(13), color: t.tea, marginBottom: 4 }}>{a.n}</div><div style={{ fontSize: s.sz(12), lineHeight: 1.6 }}>{a.d}</div></div>)}
-        <div style={s.info(t.tea)}><strong>Calculator:</strong> <a href="https://neonatalsepsiscalculator.kaiserpermanente.org/InfectionProbabilityCalculator.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.tea }}>neonatalsepsiscalculator.kaiserpermanente.org</a></div>
-      </div>}
-      {tab === "abx" && <div>
-        <div style={s.secT}>Empiric Therapy</div>
-        <div style={{ ...s.card, borderLeft: `4px solid ${t.tea}` }}><div style={{ fontWeight: 700, fontSize: s.sz(14), color: t.tea }}>Ampicillin + Gentamicin</div><div style={{ fontSize: s.sz(12), lineHeight: 1.8, marginTop: 6 }}><strong>Amp:</strong> 50 mg/kg IV q12h (meningitis: 100)<br/><strong>Gent:</strong> 4–5 mg/kg IV q24–48h<br/><br/>Stop at 36–48 hrs if cultures neg + well.</div></div>
-        <div style={s.info(t.org)}><strong>Stewardship:</strong> Prolonged empiric abx without culture → ↑ NEC, candidiasis, resistance.</div>
-      </div>}
+      <div style={s.secT}>Maternal Risk Factors</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Intrapartum fever ≥38.0°C or chorioamnionitis<br/>• GBS positive with inadequate intrapartum antibiotic prophylaxis<br/>• Rupture of membranes ≥18 hours<br/>• Preterm labor<br/>• Prior infant with invasive GBS disease</div></div>
+      <div style={s.secT}>Neonatal Risk Factors</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Prematurity and very low birth weight<br/>• Fetal tachycardia<br/>• Meconium-stained amniotic fluid<br/>• Apgar score 0–3 at 5 minutes</div></div>
+      <div style={s.secT}>Evaluation Approaches</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• <strong>Categorical risk assessment:</strong> Threshold-based algorithm. Any risk factor crossed → observation or antibiotics.<br/>• <strong>Multivariate (Sepsis Calculator):</strong> Uses GA, temp, GBS, ROM, IAP type to estimate infection probability.<br/>• <strong>Enhanced clinical observation:</strong> Serial exams regardless of risk. Treat only if clinical signs develop.</div></div>
+      <div style={s.info(t.tea)}><strong>Calculator:</strong> <a href="https://neonatalsepsiscalculator.kaiserpermanente.org/InfectionProbabilityCalculator.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.tea }}>neonatalsepsiscalculator.kaiserpermanente.org</a></div>
+      <div style={s.secT}>Labs</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• <strong>Blood culture:</strong> Gold standard. Obtain before starting antibiotics. Allow 36–48 hrs for incubation.<br/>• <strong>CBC with differential:</strong> WBC &lt;5,000 is concerning. I:T ratio &gt;0.3 suggests infection.<br/>• <strong>CRP:</strong> Adjunct to guide duration of therapy. A single normal CRP does not rule out infection.</div></div>
+      <div style={s.secT}>Empiric Therapy</div><div style={{ ...s.card, borderLeft: `4px solid ${t.tea}` }}><div style={{ fontWeight: 700, fontSize: s.sz(14), color: t.tea }}>Ampicillin + Gentamicin</div><div style={{ fontSize: s.sz(12), lineHeight: 1.8, marginTop: 6 }}><strong>Amp:</strong> 50 mg/kg IV q12h (meningitis: 100 mg/kg)<br/><strong>Gent:</strong> 4–5 mg/kg IV q24–48h (interval by GA)<br/><br/>Discontinue at 36–48 hrs if cultures negative and infant is well.</div></div>
+      <div style={s.info(t.org)}><strong>Stewardship:</strong> Prolonged empiric antibiotics without positive culture → ↑ NEC, candidiasis, resistance.</div>
+      <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, padding: "0 16px", fontStyle: "italic", lineHeight: 1.6 }}>AAP Clinical Report: Management of Neonates Born at ≥35 Weeks' Gestation With Suspected or Proven Early-Onset Bacterial Sepsis (2018).</div>
     </Page>
   );
 }
@@ -727,8 +717,8 @@ function ImageViewer({ pages, activePage, onClose, onPageChange }) {
   );
 }
 
-function InfectionCard({ title, bullets, reference, extraContent, t, s }) {
-  const [open, setOpen] = useState(false);
+function InfectionCard({ title, bullets, reference, extraContent, t, s, defaultOpen }) {
+  const [open, setOpen] = useState(defaultOpen || false);
   const liS = { fontSize: s.sz(12), lineHeight: 1.75, marginBottom: 6, paddingLeft: 4 };
   const subLiS = { fontSize: s.sz(11.5), lineHeight: 1.7, marginBottom: 4, paddingLeft: 2, color: t.text2 };
   return (
@@ -754,7 +744,7 @@ function InfectionCard({ title, bullets, reference, extraContent, t, s }) {
   );
 }
 
-function MaternalInfections({ onBack }) {
+function MaternalInfections({ onBack, highlight }) {
   const t = useT(); const s = useS();
   const [showAlgo, setShowAlgo] = useState(false);
   return (
@@ -777,7 +767,7 @@ function MaternalInfections({ onBack }) {
         <span><strong>Maternal fever or intraamniotic infection:</strong> Monitor with Q4 vital signs and evaluate for sepsis with a CBC, blood culture, and consideration of empiric antibiotics depending on sepsis risk score and clinical status. May obtian CRP at 12 hours of age and again the following day. <a href="https://neonatalsepsiscalculator.kaiserpermanente.org/InfectionProbabilityCalculator.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.tea, fontWeight: 600 }}>Open Neonatal Sepsis Calculator →</a></span>,
       ]} />
 
-      <InfectionCard t={t} s={s} title="Hepatitis B" reference='See AAP Red Book' bullets={[
+      <InfectionCard t={t} s={s} title="Hepatitis B" defaultOpen={highlight === "hepb"} reference='See AAP Red Book' bullets={[
         { text: <span><strong>Birthing parent HBsAg positive:</strong></span>, sub: [
           <span>All newborns at all birth weights: Hepatitis B vaccine <strong>and</strong> HBIG within 12 hours of birth.</span>,
         ]},
@@ -986,24 +976,55 @@ function ObstetricFactors({ onBack }) {
   );
 }
 
-function NeonatalMeds({ onBack }) {
+function NeonatalMeds({ onBack, onNav }) {
   const t = useT(); const s = useS();
-  return (<Page title="Neonatal Medications" onBack={onBack}>
-    {[{ title: "Vitamin K", dose: "1 mg IM (term) · 0.3–0.5 mg/kg (preterm <1500g)", time: "Within 1 hr", note: "Prevents VKDB. IM preferred.", c: t.org },
-      { title: "Hep B Vaccine", dose: "0.5 mL IM", time: "Within 12 hrs", note: "All infants. HBsAg(+)/unknown: + HBIG at different site.", c: t.acc },
-      { title: "Erythromycin Eye", dose: "0.5% ointment, 1cm each eye", time: "Within 1 hr", note: "Gonococcal prophylaxis. Required by law.", c: t.grn },
-      { title: "Beyfortus (Nirsevimab)", dose: "50 mg (<5 kg) · 100 mg (≥5 kg) IM", time: "Before 1st RSV season", note: "RSV mAb. Single dose ~5 mo protection. All <8 mo entering RSV season.", c: t.pur },
-    ].map(m => <div key={m.title} style={{ ...s.card, marginTop: 8, borderLeft: `4px solid ${m.c}` }}><div style={{ fontWeight: 700, fontSize: s.sz(14), color: m.c }}>{m.title}</div><div style={{ fontSize: s.sz(12), marginTop: 4 }}><strong>Dose:</strong> {m.dose}</div><div style={{ fontSize: s.sz(12) }}><strong>Timing:</strong> {m.time}</div><div style={{ fontSize: s.sz(12), color: t.text2, marginTop: 4 }}>{m.note}</div></div>)}
+  const [showVkdb, setShowVkdb] = useState(null);
+  return (<Page title="Newborn Medications" onBack={onBack}>
+    {showVkdb !== null && <ImageViewer pages={["/vkdb-factsheet-p1.png", "/vkdb-factsheet-p2.png"]} activePage={showVkdb} onClose={() => setShowVkdb(null)} onPageChange={setShowVkdb} />}
+
+    <InfectionCard t={t} s={s} title="Vitamin K (Phytonadione)" reference="AAP Policy Statement: Prevention of Vitamin K Deficiency Bleeding in Newborns." bullets={[
+      <span><strong>Dose:</strong> 1 mg IM for term infants. 0.3 to 0.5 mg/kg IM for preterm infants under 1500 grams.</span>,
+      <span><strong>Timing:</strong> Within the first 6 hours of life.</span>,
+      <span><strong>Purpose:</strong> Prevents vitamin K deficiency bleeding (VKDB), including late-onset hemorrhagic disease which can cause intracranial hemorrhage.</span>,
+      <span><strong>Route:</strong> Intramuscular injection is the preferred route. Oral vitamin K is not recommended due to unreliable absorption and inferior protection against late VKDB.</span>,
+      <span><strong>If parents decline:</strong> A provider must personally review the refusal with the family. Provide the VKDB Fact Sheet (below), counsel on the risk of life-threatening bleeding including intracranial hemorrhage, and recommend reconsideration. Document the discussion and refusal in the medical record.</span>,
+    ]} extraContent={
+      <div style={{ padding: "32px 16px 32px" }}><button onClick={() => setShowVkdb(0)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.org}12`, border: `1px solid ${t.org}30`, color: t.org, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View VKDB Fact Sheet</button></div>
+    } />
+
+    <InfectionCard t={t} s={s} title="Hepatitis B Vaccine" reference="See AAP Red Book for the complete birth dose algorithm." bullets={[
+      <span><strong>Dose:</strong> 0.5 mL intramuscular.</span>,
+      <span><strong>Timing:</strong> Within 12 hours of birth for all medically stable infants weighing 2000 grams or more.</span>,
+      <span><strong>Maternal HBsAg positive or unknown:</strong> Administer vaccine plus HBIG (0.5 mL IM) at a different injection site as soon as possible.</span>,
+      <span><strong>Low birth weight (under 2000 g):</strong> If maternal HBsAg negative, delay first dose until 1 month of age or hospital discharge.</span>,
+      <span><strong>See also:</strong> <a onClick={(e) => { e.stopPropagation(); onNav && onNav("infections", { highlight: "hepb" }); }} style={{ color: t.tea, fontWeight: 600, cursor: "pointer", textDecoration: "underline" }}>Maternal Hepatitis B</a> in Maternal Infections for the full birth dose algorithm by maternal status.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Erythromycin Eye Ointment" bullets={[
+      <span><strong>Dose:</strong> 0.5% erythromycin ophthalmic ointment, a 1 cm ribbon in each eye.</span>,
+      <span><strong>Timing:</strong> Within 24 hours of life, sooner being ideal.</span>,
+      <span><strong>Purpose:</strong> Prophylaxis against gonococcal ophthalmia neonatorum. Required by law in most states.</span>,
+      <span><strong>Note:</strong> Does not prevent chlamydial conjunctivitis. If chlamydia exposure is suspected, systemic treatment is needed.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Beyfortus (Nirsevimab)" reference="AAP Policy: Updated Guidance for Palivizumab and Nirsevimab for RSV Prevention (2023)." bullets={[
+      <span><strong>Dose:</strong> 50 mg IM if under 5 kg. 100 mg IM if 5 kg or greater.</span>,
+      <span><strong>Timing:</strong> Single dose before the infant's first RSV season.</span>,
+      <span><strong>Eligibility:</strong> All infants under 8 months entering their first RSV season, and select high-risk infants aged 8 to 19 months entering their second season.</span>,
+      <span><strong>Duration:</strong> Provides approximately 5 months of passive immunity via a monoclonal antibody against RSV F protein.</span>,
+    ]} />
+
   </Page>);
 }
 
 function Feeding({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="Feeding" onBack={onBack}>
-    <div style={s.secT}>Breastfeeding</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Initiate ≤1 hr. On demand q2–3h. Day 1: 2–5 mL/feed → Day 3–4: 30–60 mL. Signs: audible swallow, 4+ wet/3+ stools by day 4. Acceptable loss: &lt;7% by day 3.</div></div>
-    <div style={s.secT}>Donor Milk</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>≥5 mL if mother's unavailable. Verbal consent. Pasteurized from milk banks.</div></div>
-    <div style={s.secT}>Formula</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Standard: 20 kcal/oz. Specialized if allergy/malabsorption suspected.</div></div>
+    <div style={s.secT}>Breastfeeding</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>Place skin-to-skin and encourage the first feed within 1 hour of birth. Feed on demand, approximately every 2–3 hours (8–12 times per day).<br/><br/><strong>Expected intake:</strong> Day 1: 2–5 mL/feed (colostrum) → Day 3–4: 30–60 mL/feed as milk transitions in.<br/><br/><strong>Adequate intake signs:</strong> Audible swallowing, 4+ wet diapers and 3+ stools by day 4.<br/><br/><strong>Weight loss:</strong> Acceptable loss is &lt;7% by day 3. Greater than 10% warrants evaluation of feeding adequacy.</div></div>
+    <div style={s.secT}>Donor Milk</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>When the mother's own milk is unavailable and supplementation is needed. Start with ≥5 mL per supplemental feed. Verbal consent is typically required per institutional policy. Use pasteurized donor human milk from an accredited milk bank (e.g., HMBANA).</div></div>
+    <div style={s.secT}>Formula</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>Standard: 20 kcal/oz, iron-fortified. Appropriate for most term newborns when human milk is not available. Consider specialized formulas if concern for cow's milk protein allergy, malabsorption, or metabolic disorders.</div></div>
     <div style={s.info(t.grn)}><a href="https://www.ncbi.nlm.nih.gov/books/NBK501922/" target="_blank" rel="noopener noreferrer" style={{ color: t.grn, fontWeight: 700 }}>LactMed →</a> Drug safety in breastfeeding</div>
+    <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, padding: "0 16px", fontStyle: "italic", lineHeight: 1.6 }}>AAP Policy Statement: Breastfeeding and the Use of Human Milk (2022).</div>
   </Page>);
 }
 
@@ -1011,45 +1032,78 @@ function VoidingStooling({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="Voiding & Stooling" onBack={onBack}>
     <div style={{ ...s.card, padding: 0, overflow: "hidden", marginTop: 14 }}><table style={{ width: "100%", borderCollapse: "collapse", fontSize: s.sz(11) }}><thead><tr><th style={s.tH}>Day</th><th style={s.tH}>Wet</th><th style={s.tH}>Stools</th><th style={s.tH}>Type</th></tr></thead><tbody>
-      {[["1","1+","1+","Meconium"],["2","2+","1–2","Transitional"],["3","3+","2+","Green/brown"],["4","4+","3+","Yellow, seedy"],["5–7","6+","3–4+","Formed"]].map(([d,w,st,ty],i) => <tr key={d} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600 }}>{d}</td><td style={s.tC}>{w}</td><td style={s.tC}>{st}</td><td style={{ ...s.tC, fontSize: s.sz(10), textAlign: "left", paddingLeft: 8 }}>{ty}</td></tr>)}
+      {[["1","1+","1+","Meconium"],["2","2+","1–2","Transitional"],["3","3+","2+","Green/brown"],["4","4+","3+","Yellow, seedy"],["5–7","6+","3–4+","Soft, formed"]].map(([d,w,st,ty],i) => <tr key={d} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600 }}>{d}</td><td style={s.tC}>{w}</td><td style={s.tC}>{st}</td><td style={{ ...s.tC, fontSize: s.sz(10), textAlign: "left", paddingLeft: 8 }}>{ty}</td></tr>)}
     </tbody></table></div>
-    <div style={s.info(t.org)}><strong>Red flags:</strong> No urine by 24h, no stool by 48h, brick dust after day 3.</div>
+    <div style={s.info(t.org)}><strong>Red flags:</strong> No urine by 24 hrs (dehydration, renal anomaly, posterior urethral valves). No stool by 48 hrs (consider Hirschsprung, meconium ileus). Brick dust urine after day 3 (inadequate intake).</div>
   </Page>);
 }
 
 function BilirubinSection({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="Bilirubin" onBack={onBack}>
-    <div style={s.secT}>Risk Factors</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Jaundice &lt;24 hrs<br/>• ABO/Rh incompatibility + DAT(+)<br/>• GA 35–36 wks<br/>• Prior sibling phototherapy<br/>• Cephalohematoma/bruising<br/>• Exclusive BF (esp. poor latch)<br/>• East Asian race</div></div>
-    <div style={s.secT}>Screening</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Predischarge TcB/TSB for all. Plot on Bhutani nomogram. F/u 1–2 days post-discharge per risk zone.</div></div>
-    <div style={s.info(t.ylw)}><a href="https://bilitool.org/" target="_blank" rel="noopener noreferrer" style={{ color: t.ylw, fontWeight: 700 }}>BiliTool →</a> Phototherapy threshold calculator</div>
-    <div style={s.info(t.red)}><strong>Exchange transfusion:</strong> If TSB approaching exchange level despite intensive phototherapy or signs of encephalopathy.</div>
+    <div style={{ padding: "32px 16px 12px" }}><button onClick={() => window.open("https://bilitool.org/", "_blank")} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.ylw}12`, border: `1px solid ${t.ylw}30`, color: t.ylw, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> Open BiliTool</button></div>
+    <div style={s.secT}>Risk Factors</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Jaundice in the first 24 hours (always pathologic)<br/>• ABO/Rh incompatibility + positive DAT<br/>• GA 35–36 weeks (immature hepatic conjugation)<br/>• Prior sibling with phototherapy<br/>• Cephalohematoma or significant bruising<br/>• Exclusive breastfeeding with suboptimal intake<br/>• East Asian race</div></div>
+    <div style={s.secT}>Screening</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>Predischarge TcB or TSB for all infants. Plot on the hour-specific Bhutani nomogram. Schedule follow-up based on risk zone — high-risk infants should be seen within 1 day of discharge.</div></div>
+    <div style={s.secT}>Management</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}><strong>Phototherapy:</strong> Initiate when TSB reaches the hour-specific threshold for gestational age and risk factors.<br/><br/><strong>Exchange transfusion:</strong> Consider if TSB approaches exchange level despite intensive phototherapy, or if signs of acute bilirubin encephalopathy (lethargy, hypotonia, poor feeding, high-pitched cry).</div></div>
+    <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, padding: "0 16px", fontStyle: "italic", lineHeight: 1.6 }}>AAP Clinical Practice Guideline: Management of Hyperbilirubinemia in the Newborn Infant (2022 Revision).</div>
   </Page>);
 }
 
 function HearingScreen({ onBack }) {
   const t = useT(); const s = useS();
-  return (<Page title="Hearing / CMV" onBack={onBack}>
-    <div style={s.secT}>Universal Hearing</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>OAE or ABR before discharge. Failed → outpatient ABR by 1 mo. Dx audiology by 3 mo. Intervention by 6 mo (1-3-6).</div></div>
-    <div style={s.secT}>CMV</div><div style={{ ...s.card, borderLeft: `4px solid ${t.pnk}` }}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Failed hearing → CMV PCR (saliva/urine) before 21 days. Leading non-genetic cause of SNHL. Early ID → valganciclovir consideration.</div></div>
+  return (<Page title="Hearing Screen" onBack={onBack}>
+    <div style={s.secT}>Method</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>Otoacoustic emissions (OAE) or auditory brainstem response (ABR) before hospital discharge.</div></div>
+    <div style={s.secT}>1-3-6 Benchmarks</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Screen by <strong>1 month</strong> of age<br/>• Diagnostic audiology evaluation by <strong>3 months</strong> if failed<br/>• Intervention (amplification, early intervention services) by <strong>6 months</strong></div></div>
+    <div style={s.info(t.pnk)}><strong>Failed screen:</strong> Refer for outpatient diagnostic ABR. Do not delay — early identification and intervention are critical for language development.</div>
+    <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, padding: "0 16px", fontStyle: "italic", lineHeight: 1.6 }}>Joint Committee on Infant Hearing (JCIH) Position Statement (2019).</div>
+  </Page>);
+}
+
+function AdditionalScreenings({ onBack }) {
+  const t = useT(); const s = useS();
+  return (<Page title="Additional Screenings" onBack={onBack}>
+
+    <InfectionCard t={t} s={s} title="Congenital CMV Screening" reference="AAP: Congenital Cytomegalovirus Infection Screening and Management." bullets={[
+      <span><strong>When to test:</strong> Any infant who fails the newborn hearing screen should be tested for congenital CMV before 21 days of life.</span>,
+      <span><strong>Method:</strong> CMV PCR on saliva or urine. Saliva is preferred for ease of collection, but a positive result should be confirmed with urine.</span>,
+      <span><strong>Why it matters:</strong> CMV is the leading non-genetic cause of sensorineural hearing loss in children. Hearing loss may be present at birth or develop progressively.</span>,
+      <span><strong>Treatment consideration:</strong> Valganciclovir may be considered for symptomatic congenital CMV with CNS involvement, including hearing loss. Refer to pediatric infectious disease.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Fetal Pelviectasis" bullets={[
+      <span><strong>Definition:</strong> Dilation of the renal pelvis (anteroposterior diameter 4 mm or greater on prenatal ultrasound). Also referred to as prenatal hydronephrosis.</span>,
+      { text: <span><strong>Postnatal evaluation:</strong></span>, sub: [
+        <span>Renal and bladder ultrasound after 48 hours of life (earlier imaging may underestimate dilation due to physiologic dehydration)</span>,
+        <span>If prenatal dilation was bilateral or severe (APD ≥10 mm), obtain ultrasound sooner and consider voiding cystourethrogram (VCUG)</span>,
+      ]},
+      { text: <span><strong>Grading (Society for Fetal Urology):</strong></span>, sub: [
+        <span>Mild (APD 4–7 mm): Postnatal ultrasound at 1 to 4 weeks. Most resolve spontaneously.</span>,
+        <span>Moderate (APD 7–10 mm): Postnatal ultrasound within the first week. Follow-up imaging at 1 to 3 months.</span>,
+        <span>Severe (APD ≥10 mm): Postnatal ultrasound within the first few days. VCUG to evaluate for vesicoureteral reflux. Consider pediatric urology referral.</span>,
+      ]},
+      <span><strong>Antibiotic prophylaxis:</strong> May be considered for moderate to severe dilation or confirmed reflux, per institutional protocol. Commonly amoxicillin 20 mg/kg/day in a single daily dose.</span>,
+      <span><strong>Counseling:</strong> Most mild cases resolve by 12 to 18 months. Emphasize the importance of follow-up imaging even if the infant appears well.</span>,
+    ]} />
+
   </Page>);
 }
 
 function CCHDScreen({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="CCHD Screening" onBack={onBack}>
-    <div style={{ ...s.info(t.acc), marginTop: 14 }}><strong>At 24–48 hrs</strong> or before discharge. Right hand + either foot.</div>
-    {[{ r: "PASS", c: "Both ≥95% AND diff ≤3%", color: t.grn, bg: t.grnL },{ r: "REPEAT", c: "90–94% OR diff >3%", color: t.org, bg: t.orgL },{ r: "FAIL", c: "<90% OR 3 failed screens", color: t.red, bg: t.redL }].map(x => <div key={x.r} style={{ ...s.card, background: x.bg, marginTop: 8 }}><div style={{ fontWeight: 800, fontSize: s.sz(15), color: x.color }}>{x.r}</div><div style={{ fontSize: s.sz(12), marginTop: 2 }}>{x.c}</div></div>)}
-    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>REPEAT: rescreen q1h (×3 max). FAIL: MD + echo. Does NOT detect all CHD.</div></div>
+    <div style={{ ...s.info(t.acc), marginTop: 14 }}><strong>At 24–48 hrs</strong> or before discharge. Right hand (preductal) + either foot (postductal).</div>
+    {[{ r: "PASS", c: "Both ≥95% AND difference ≤3%", color: t.grn, bg: t.grnL },{ r: "REPEAT", c: "Either site 90–94%, OR difference >3%. Rescreen in 1 hr (×3 max).", color: t.org, bg: t.orgL },{ r: "FAIL", c: "Either site <90%, OR 3 failed screens. Notify MD → echocardiogram.", color: t.red, bg: t.redL }].map(x => <div key={x.r} style={{ ...s.card, background: x.bg, marginTop: 8 }}><div style={{ fontWeight: 800, fontSize: s.sz(15), color: x.color }}>{x.r}</div><div style={{ fontSize: s.sz(12), marginTop: 2 }}>{x.c}</div></div>)}
+    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Does NOT detect all CHD — lesions without significant desaturation (coarctation, small VSDs) may be missed. False positives can occur with transitional physiology or hypothermia. Clinical exam remains essential: auscultate for murmurs, assess pulses in all four extremities.</div></div>
+    <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, padding: "0 16px", fontStyle: "italic", lineHeight: 1.6 }}>AAP/AHA: Endorsement of HHS Recommendation for Pulse Oximetry Screening for CCHD.</div>
   </Page>);
 }
 
 function NewbornScreen({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="Newborn Screen" onBack={onBack}>
-    <div style={s.secT}>Timing</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Collect <strong>24–48 hrs</strong>, after first feed. If early d/c, collect before and repeat outpatient. Second screen 1–2 wks.</div></div>
-    <div style={s.secT}>CA NBS Panel</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Amino acid disorders (PKU, MSUD)<br/>• FAO disorders (MCADD, VLCADD)<br/>• Organic acid disorders<br/>• Hemoglobinopathies<br/>• Congenital hypothyroidism<br/>• CAH<br/>• CF<br/>• Galactosemia<br/>• Biotinidase deficiency<br/>• SCID · SMA · X-ALD · MPS I · Pompe</div></div>
-    <div style={s.info(t.acc)}><a href="https://www.cdph.ca.gov/Programs/CFH/DGDS/Pages/nbs/default.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.acc, fontWeight: 700 }}>CA NBS Program →</a></div>
+    <div style={s.secT}>Timing</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>Collect at <strong>24–48 hours of life</strong>, ideally after the first feed (amino acid detection requires protein intake). If discharged before 24 hrs, collect before discharge and repeat outpatient. Second screen at 1–2 weeks per state guidelines.</div></div>
+    <div style={s.secT}>California NBS Panel</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Amino acid disorders (PKU, MSUD)<br/>• Fatty acid oxidation disorders (MCADD, VLCADD)<br/>• Organic acid disorders<br/>• Hemoglobinopathies (sickle cell disease)<br/>• Congenital hypothyroidism<br/>• Congenital adrenal hyperplasia (CAH)<br/>• Cystic fibrosis<br/>• Galactosemia · Biotinidase deficiency<br/>• SCID · SMA · X-ALD · MPS I · Pompe</div></div>
+    <div style={s.info(t.acc)}><a href="https://www.cdph.ca.gov/Programs/CFH/DGDS/Pages/nbs/default.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.acc, fontWeight: 700 }}>CA NBS Program →</a> Full panel and follow-up protocols</div>
   </Page>);
 }
 
@@ -1069,32 +1123,95 @@ function ComplicationsNav({ onBack, onNav }) {
 function Hypothermia({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="Hypothermia" onBack={onBack}>
-    <div style={{ ...s.card, padding: 0, overflow: "hidden", marginTop: 14 }}><table style={{ width: "100%", borderCollapse: "collapse", fontSize: s.sz(11) }}><thead><tr><th style={s.tH}>Classification</th><th style={s.tH}>Temp</th></tr></thead><tbody>
-      {[["Normal","36.5–37.5°C"],["Cold stress","36.0–36.4°C"],["Moderate","32.0–35.9°C"],["Severe","<32.0°C"]].map(([c,v],i) => <tr key={c} style={{ background: i%2===0?t.surfaceSolid:t.bg3 }}><td style={{ ...s.tC, fontWeight: 600, textAlign: "left", paddingLeft: 14 }}>{c}</td><td style={s.tC}>{v}</td></tr>)}
-    </tbody></table></div>
-    <div style={s.secT}>Prevention</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Room ≥25°C<br/>• Dry immediately, STS, hat<br/>• Delay bath ≥12–24 hrs<br/>• Plastic wrap if &lt;32 wks</div></div>
-    <div style={s.secT}>Management</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Rewarm 0.5°C/hr. STS/warmer/incubator. Monitor glucose. Rule out sepsis/endocrine if persistent.</div></div>
+
+    <InfectionCard t={t} s={s} title="Temperature Classification (WHO)" reference="WHO: Thermal Protection of the Newborn — A Practical Guide." bullets={[
+      <span><strong>Normal:</strong> 36.5 to 37.5°C (97.7 to 99.5°F).</span>,
+      <span><strong>Cold stress (mild hypothermia):</strong> 36.0 to 36.4°C (96.8 to 97.5°F).</span>,
+      <span><strong>Moderate hypothermia:</strong> 32.0 to 35.9°C (89.6 to 96.6°F).</span>,
+      <span><strong>Severe hypothermia:</strong> Below 32.0°C (89.6°F).</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Prevention" bullets={[
+      <span><strong>Delivery room temperature:</strong> Maintain at 25°C (77°F) or higher.</span>,
+      <span><strong>Immediately after birth:</strong> Dry thoroughly, place skin-to-skin, and cover with a warm blanket and hat.</span>,
+      <span><strong>Delay bath:</strong> Wait at least 12 to 24 hours after birth.</span>,
+      <span><strong>Extremely preterm (under 32 weeks):</strong> Place in a polyethylene bag or wrap (without drying first) to reduce evaporative heat loss.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Management" bullets={[
+      <span><strong>Rewarming rate:</strong> Increase temperature by no more than 0.5°C per hour to avoid apnea and arrhythmia.</span>,
+      <span><strong>Methods:</strong> Skin-to-skin contact, radiant warmer, or incubator depending on severity.</span>,
+      <span><strong>Monitor glucose:</strong> Hypothermia increases metabolic demand and can cause hypoglycemia.</span>,
+      <span><strong>Consider underlying cause:</strong> If hypothermia is persistent or recurrent, evaluate for sepsis, endocrine abnormalities (hypothyroidism, adrenal insufficiency), or CNS pathology.</span>,
+    ]} />
+
   </Page>);
 }
 
 function NOWS({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="NOWS / ESC" onBack={onBack}>
-    <div style={{ ...s.info(t.pur), marginTop: 14 }}><strong>Eat, Sleep, Console (ESC)</strong> replaces Finnegan scoring.</div>
-    {[{ q: "EAT?", d: "≥1 oz or good BF? Coordinated suck?", c: t.grn },{ q: "SLEEP?", d: "≥1 hr undisturbed between cares?", c: t.acc },{ q: "CONSOLED?", d: "Within 10 min? Responds to swaddle/hold?", c: t.pur }].map(x => <div key={x.q} style={{ ...s.card, borderLeft: `4px solid ${x.c}`, marginTop: 8 }}><div style={{ fontWeight: 700, fontSize: s.sz(13), color: x.c }}>Can the infant {x.q}</div><div style={{ fontSize: s.sz(12), marginTop: 4 }}>{x.d}</div></div>)}
-    <div style={s.secT}>Non-Pharm First</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>Swaddling, STS, low stim, BF, small frequent feeds, pacifier</div></div>
-    <div style={s.secT}>Pharmacologic</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>If ESC consistently unmet: morphine PO 0.04–0.08 mg/kg q3–4h. Wean 10–20% q24–48h. Adjuncts: clonidine, phenobarb.</div></div>
+
+    <InfectionCard t={t} s={s} title="Eat, Sleep, Console (ESC) Assessment" reference="Grossman, M. et al. 'An Initiative to Improve the Quality of Care of Infants With Neonatal Abstinence Syndrome.' Pediatrics (2017)." bullets={[
+      <span><strong>ESC replaces Finnegan scoring</strong> as the preferred functional assessment for neonatal opioid withdrawal syndrome.</span>,
+      { text: <span><strong>Can the infant EAT?</strong></span>, sub: [
+        <span>Taking 1 ounce or more per feed (or breastfeeding effectively)</span>,
+        <span>Coordinated suck and swallow</span>,
+      ]},
+      { text: <span><strong>Can the infant SLEEP?</strong></span>, sub: [
+        <span>Sleeping at least 1 hour undisturbed between care times</span>,
+      ]},
+      { text: <span><strong>Can the infant be CONSOLED?</strong></span>, sub: [
+        <span>Consoled within 10 minutes using non-pharmacologic measures (swaddling, holding, rocking)</span>,
+      ]},
+      <span><strong>If all three are met:</strong> Continue non-pharmacologic care. If consistently unmet despite optimized supportive measures, consider pharmacologic therapy.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Non-Pharmacologic Management (First Line)" bullets={[
+      <span><strong>Environment:</strong> Low-light, low-stimulation room. Minimize handling and noise.</span>,
+      <span><strong>Comfort:</strong> Swaddling, skin-to-skin contact, pacifier, gentle rocking.</span>,
+      <span><strong>Feeding:</strong> Small, frequent feeds. Breastfeeding encouraged when not contraindicated (see Maternal Conditions — Substance Use).</span>,
+      <span><strong>Rooming-in:</strong> Keeping the infant with the parent improves outcomes and reduces length of stay.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Pharmacologic Therapy" reference="AAP Clinical Report: Neonatal Opioid Withdrawal Syndrome (2020)." bullets={[
+      <span><strong>First-line:</strong> Morphine sulfate 0.04 to 0.08 mg/kg orally every 3 to 4 hours.</span>,
+      <span><strong>Weaning:</strong> Once ESC criteria are consistently met for 24 to 48 hours, wean by 10 to 20% of the dose every 24 to 48 hours.</span>,
+      <span><strong>Adjunctive agents:</strong> Clonidine or phenobarbital may be added for refractory symptoms or polysubstance exposure.</span>,
+      <span><strong>Goal:</strong> Functional comfort (eating, sleeping, consolable) — not elimination of all withdrawal signs.</span>,
+    ]} />
+
   </Page>);
 }
 
 function TTN({ onBack }) {
   const t = useT(); const s = useS();
-  return (<Page title="TTN" onBack={onBack}>
-    <div style={s.secT}>Risk Factors</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• C/S without labor (strongest)<br/>• Male · Macrosomia<br/>• Maternal DM<br/>• Lower GA · FHx asthma</div></div>
-    <div style={s.secT}>Pathophysiology</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Delayed fetal lung fluid clearance. Labor → catecholamine → ENaC activation → absorption. C/S bypasses this.</div></div>
-    <div style={s.secT}>Features</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>RR 60–100+, retractions, grunting. Grunting resolves: 68% by 30 min, 93% by 2 hrs. Barrel chest.</div></div>
-    <div style={s.secT}>Diagnosis</div><div style={{ ...s.card, borderLeft: `4px solid ${t.org}` }}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}><strong>Exclusion dx.</strong> R/o RDS, PNA, PTX, CHD. CXR: perihilar streaking, fluid in fissures. Resolves 24–72 hrs.</div></div>
-    <div style={s.secT}>Management</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Supportive. O2 for SpO2 ≥92%. CPAP PRN. NPO if RR &gt;60–80. No diuretics. Empiric abx if sepsis possible.</div></div>
+  return (<Page title="Transient Tachypnea of the Newborn" onBack={onBack}>
+
+    <InfectionCard t={t} s={s} title="Risk Factors and Pathophysiology" bullets={[
+      <span><strong>Strongest risk factor:</strong> Cesarean delivery without labor. Labor triggers catecholamine release, which activates epithelial sodium channels (ENaC) to clear fetal lung fluid.</span>,
+      <span><strong>Other risk factors:</strong> Male sex, macrosomia, maternal diabetes, lower gestational age, and family history of asthma.</span>,
+      <span><strong>Mechanism:</strong> Delayed clearance of fetal lung fluid results in transient pulmonary edema and respiratory distress.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Clinical Features" bullets={[
+      <span><strong>Onset:</strong> Respiratory distress within the first hours of life, typically improving by 24 to 72 hours.</span>,
+      <span><strong>Signs:</strong> Tachypnea (respiratory rate 60 to 100+), nasal flaring, mild retractions, grunting, and a barrel-shaped chest appearance.</span>,
+      <span><strong>Natural course of grunting:</strong> Resolves in approximately 68% of infants by 30 minutes and 93% by 2 hours.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Diagnosis" bullets={[
+      <span><strong>TTN is a diagnosis of exclusion.</strong> Must rule out respiratory distress syndrome (RDS), pneumonia, pneumothorax, and congenital heart disease.</span>,
+      <span><strong>Chest radiograph (if obtained):</strong> Perihilar streaking, fluid in the interlobar fissures, and mild hyperinflation. Findings typically resolve within 48 to 72 hours.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Management" bullets={[
+      <span><strong>Supportive care:</strong> Supplemental oxygen to maintain SpO2 of 92% or higher. CPAP if needed for persistent distress.</span>,
+      <span><strong>Feeding:</strong> NPO if respiratory rate exceeds 60 to 80 due to aspiration risk. Initiate IV fluids as needed.</span>,
+      <span><strong>Diuretics are not indicated</strong> and have not been shown to be beneficial.</span>,
+      <span><strong>Empiric antibiotics:</strong> Consider if sepsis cannot be excluded based on clinical picture and risk factors.</span>,
+    ]} />
+
   </Page>);
 }
 
@@ -1150,10 +1267,35 @@ function ExtracranialInjuries({ onBack }) {
 function TherapeuticHypothermia({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="Therapeutic Hypothermia" onBack={onBack}>
-    <div style={{ ...s.info(t.red), marginTop: 14 }}><strong>Initiate within 6 hours of birth.</strong></div>
-    <div style={s.secT}>Eligibility</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}><strong>Step 1:</strong> ≥36 wks + ≥1800g AND acute perinatal event OR pH ≤7.0/BE ≤−16 OR APGAR ≤5 at 10 min OR ventilation at 10 min<br/><br/><strong>Step 2:</strong> Sarnat ≥3/6 categories Moderate or Severe</div></div>
-    <div style={s.secT}>Protocol</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Target: <strong>33.5°C ± 0.5</strong><br/>• Duration: <strong>72 hours</strong><br/>• Rewarm: 0.5°C/hr over 6–12 hrs<br/>• Continuous temp, HR, BP, SpO2</div></div>
-    <div style={s.secT}>Monitoring</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• aEEG/EEG<br/>• Labs: ABG, glc, lytes, LFTs, coags, lactate<br/>• NPO (TPN/IVF)<br/>• Seizures: phenobarbital 1st line<br/>• MRI day 4–7</div></div>
+
+    <InfectionCard t={t} s={s} title="Eligibility Criteria" reference="Shankaran, S. et al. 'Whole-Body Hypothermia for Neonates with Hypoxic-Ischemic Encephalopathy.' NEJM (2005). See also institutional cooling protocol." bullets={[
+      <span><strong>Time window:</strong> Must be initiated within 6 hours of birth.</span>,
+      { text: <span><strong>Step 1 — Perinatal criteria</strong> (at least one):</span>, sub: [
+        <span>Gestational age 36 weeks or greater and birth weight 1800 grams or greater</span>,
+        <span>Acute perinatal event (placental abruption, cord prolapse, uterine rupture)</span>,
+        <span>Cord or postnatal pH 7.0 or less, or base excess −16 or worse</span>,
+        <span>Apgar score 5 or less at 10 minutes, or continued need for ventilation at 10 minutes</span>,
+      ]},
+      { text: <span><strong>Step 2 — Neurologic exam</strong> (Modified Sarnat):</span>, sub: [
+        <span>Moderate or severe encephalopathy in 3 or more of 6 categories</span>,
+      ]},
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Cooling Protocol" bullets={[
+      <span><strong>Target temperature:</strong> 33.5°C ± 0.5°C (whole-body cooling).</span>,
+      <span><strong>Duration:</strong> 72 hours of active cooling.</span>,
+      <span><strong>Rewarming:</strong> Increase by no more than 0.5°C per hour over 6 to 12 hours.</span>,
+      <span><strong>Continuous monitoring:</strong> Temperature, heart rate, blood pressure, and pulse oximetry throughout cooling and rewarming.</span>,
+    ]} />
+
+    <InfectionCard t={t} s={s} title="Monitoring During Cooling" bullets={[
+      <span><strong>Neuromonitoring:</strong> Continuous amplitude-integrated EEG (aEEG) or conventional EEG.</span>,
+      <span><strong>Labs:</strong> Arterial blood gas, glucose, electrolytes, liver function tests, coagulation studies, and lactate.</span>,
+      <span><strong>Nutrition:</strong> NPO during cooling. Provide total parenteral nutrition and IV fluids.</span>,
+      <span><strong>Seizure management:</strong> Phenobarbital is the first-line agent. Monitor for subclinical seizures on EEG.</span>,
+      <span><strong>MRI:</strong> Obtain brain MRI on day 4 to 7 of life for prognostic assessment.</span>,
+    ]} />
+
   </Page>);
 }
 
@@ -1279,14 +1421,15 @@ function NewbornHome({ onNav }) {
     { id: "delivery", label: "Delivery & NRP", desc: "APGAR, NRP, equipment", icon: <Hospital size={18} />, color: t.acc },
     { id: "routine", label: "Maternal Factors", desc: "Infections, conditions, obstetric", icon: <PersonStanding size={18} />, color: t.grn },
     { id: "neonatal_meds", label: "Neonatal Medications", desc: "Vit K, Hep B, Erythromycin, Beyfortus", icon: <Pill size={18} />, color: t.org },
+    { id: "fenton", label: "Weights & Growth", desc: "Fenton 2025 cutoffs", icon: <TrendingUp size={18} />, color: t.tea },
     { id: "feeding", label: "Feeding", desc: "Breast, donor milk, formula", icon: <Milk size={18} />, color: t.grn },
     { id: "voiding", label: "Voiding & Stooling", desc: "Patterns by day of life", icon: <Droplets size={18} />, color: t.acc },
     { id: "bilirubin", label: "Bilirubin", desc: "Screening, phototherapy", icon: <Sun size={18} />, color: t.ylw },
-    { id: "hearing", label: "Hearing / CMV", desc: "Screening & follow-up", icon: <Ear size={18} />, color: t.pnk },
-    { id: "cchd", label: "CCHD Screening", desc: "Pulse oximetry", icon: <Heart size={18} />, color: t.red },
+    { id: "cchd", label: "CCHD Screen", desc: "Pulse oximetry", icon: <Heart size={18} />, color: t.red },
+    { id: "hearing", label: "Hearing Screen", desc: "OAE, ABR, 1-3-6", icon: <Ear size={18} />, color: t.pnk },
     { id: "nbs", label: "Newborn Screen", desc: "Metabolic screening", icon: <TestTubes size={18} />, color: t.pur },
-    { id: "fenton", label: "Weights & Growth", desc: "Fenton 2025 cutoffs", icon: <TrendingUp size={18} />, color: t.tea },
-    { id: "glucose", label: "Hypoglycemia", desc: "Glucose screening v3.1", icon: <Droplets size={18} />, color: t.pur },
+    { id: "glucose", label: "Glucose Screening", desc: "Hypoglycemia protocol", icon: <Droplets size={18} />, color: t.pur },
+    { id: "additional_screenings", label: "Additional Screenings", desc: "CMV, pelviectasis", icon: <Search size={18} />, color: t.tea },
     { id: "sepsis", label: "Early Onset Sepsis", desc: "Risk & management", icon: <Bug size={18} />, color: t.org },
     { id: "complications", label: "Complications", desc: "Hypothermia, NOWS, TTN", icon: <AlertTriangle size={18} />, color: t.ylw },
   ];
@@ -1405,6 +1548,7 @@ export default function NewbornPocketPro() {
   const [activeTab, setActiveTab] = useState("newborn");
   const [navStack, setNavStack] = useState({ newborn: [], icn: [], links: [], guidelines: [], options: [] });
   const [navDirection, setNavDirection] = useState("forward");
+  const [navParams, setNavParams] = useState({});
 
   useEffect(() => {
     const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
@@ -1418,7 +1562,7 @@ export default function NewbornPocketPro() {
   const currentStack = navStack[activeTab] || [];
   const currentPage = currentStack.length > 0 ? currentStack[currentStack.length - 1] : null;
 
-  const goTo = useCallback((page) => { setNavDirection("forward"); setNavStack(prev => ({ ...prev, [activeTab]: [...(prev[activeTab] || []), page] })); }, [activeTab]);
+  const goTo = useCallback((page, params) => { setNavDirection("forward"); if (params) setNavParams(prev => ({ ...prev, [page]: params })); setNavStack(prev => ({ ...prev, [activeTab]: [...(prev[activeTab] || []), page] })); }, [activeTab]);
   const goBack = useCallback(() => { setNavDirection("back"); setNavStack(prev => ({ ...prev, [activeTab]: (prev[activeTab] || []).slice(0, -1) })); }, [activeTab]);
   const handleTab = (id) => { setNavDirection("forward"); if (id === activeTab) setNavStack(prev => ({ ...prev, [id]: [] })); else setActiveTab(id); };
 
@@ -1453,14 +1597,15 @@ export default function NewbornPocketPro() {
     if (p === "nrp") return <NRPAlgorithm onBack={goBack} />;
     if (p === "equipment") return <EquipmentEstimates onBack={goBack} />;
     if (p === "routine") return <RoutineNewborn onBack={goBack} onNav={goTo} />;
-    if (p === "infections") return <MaternalInfections onBack={goBack} />;
+    if (p === "infections") return <MaternalInfections onBack={goBack} highlight={navParams.infections?.highlight} />;
     if (p === "maternal_conditions") return <MaternalConditions onBack={goBack} />;
     if (p === "obstetric") return <ObstetricFactors onBack={goBack} />;
-    if (p === "neonatal_meds") return <NeonatalMeds onBack={goBack} />;
+    if (p === "neonatal_meds") return <NeonatalMeds onBack={goBack} onNav={goTo} />;
     if (p === "feeding") return <Feeding onBack={goBack} />;
     if (p === "voiding") return <VoidingStooling onBack={goBack} />;
     if (p === "bilirubin") return <BilirubinSection onBack={goBack} />;
     if (p === "hearing") return <HearingScreen onBack={goBack} />;
+    if (p === "additional_screenings") return <AdditionalScreenings onBack={goBack} />;
     if (p === "cchd") return <CCHDScreen onBack={goBack} />;
     if (p === "nbs") return <NewbornScreen onBack={goBack} />;
     if (p === "sepsis") return <EOSSection onBack={goBack} />;
