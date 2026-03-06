@@ -639,18 +639,110 @@ function RoutineNewborn({ onBack, onNav }) {
   ]} onTap={onNav} /></div></Page>);
 }
 
+function InfectionCard({ title, bullets, reference, t, s }) {
+  const [open, setOpen] = useState(false);
+  const liS = { fontSize: s.sz(12), lineHeight: 1.75, marginBottom: 6, paddingLeft: 4 };
+  const subLiS = { fontSize: s.sz(11.5), lineHeight: 1.7, marginBottom: 4, paddingLeft: 2, color: t.text2 };
+  return (
+    <div style={{ ...s.card, marginTop: 10, padding: 0, overflow: "hidden" }}>
+      <button onClick={() => setOpen(!open)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px", background: "none", border: "none", cursor: "pointer", textAlign: "left", gap: 10 }}>
+        <div style={{ fontWeight: 700, fontSize: s.sz(14), color: t.text, fontFamily: '"Poppins", sans-serif', flex: 1 }}>{title}</div>
+        <div style={{ fontSize: 16, color: t.text3, transition: "transform 0.25s ease", transform: open ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }}>▼</div>
+      </button>
+      {open && (
+        <div style={{ padding: "0 16px 14px", borderTop: `1px solid ${t.border}` }}>
+          <ul style={{ margin: 0, paddingLeft: 18, paddingTop: 12 }}>
+            {bullets.map((b, i) => <li key={i} style={liS}>{b.text || b}{b.sub && (
+              <ul style={{ margin: "4px 0 2px", paddingLeft: 16, listStyleType: "disc" }}>
+                {b.sub.map((sb, j) => <li key={j} style={subLiS}>{sb}</li>)}
+              </ul>
+            )}</li>)}
+          </ul>
+          <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, fontStyle: "italic", lineHeight: 1.6, borderTop: `1px solid ${t.border}`, paddingTop: 8 }}>{reference}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MaternalInfections({ onBack }) {
   const t = useT(); const s = useS();
-  const items = [
-    { title: "GBS", content: "Adequate IAP (≥4 hrs pen/amp before delivery): routine care. Inadequate IAP: enhanced observation ≥36 hrs, monitor vitals and feeding. If sepsis signs develop, obtain blood culture and start ampicillin + gentamicin." },
-    { title: "Prolonged ROM (≥18 hrs)", content: "Enhanced observation 36–48 hrs with vitals and clinical assessment. If maternal fever or chorioamnionitis, evaluate for sepsis with CBC, blood culture, and consider LP. Use Kaiser EOS calculator to guide management." },
-    { title: "Hepatitis B", content: "All newborns: Hep B vaccine within 12 hrs. If mother HBsAg(+) or unknown: also give HBIG within 12 hrs. Check infant HBsAg and anti-HBs at 9–12 months. Breastfeeding is safe after vaccination." },
-    { title: "Hepatitis C", content: "No vaccine or prophylaxis available. Test infant with HCV RNA at 2–6 months or anti-HCV at ≥18 months. Breastfeeding is OK unless nipples are cracked or bleeding. Refer to peds GI if positive." },
-    { title: "HIV", content: "Start ART within 6 hrs of birth. Low risk: ZDV × 4 weeks. High risk (detectable VL or no prenatal care): ZDV + lamivudine + nevirapine. No breastfeeding in resource-rich settings. HIV PCR at birth, 14–21 days, 1–2 mo, 4–6 mo." },
-    { title: "HSV", content: "Active genital lesions at delivery: C-section recommended. If risk factors present, obtain surface cultures and HSV PCR at 24 hrs. Consider empiric IV acyclovir 60 mg/kg/day ÷ q8h. Watch for vesicles, seizures, lethargy, temp instability." },
-    { title: "Syphilis", content: "Maternal RPR/VDRL(+): evaluate infant with RPR, CBC, LFTs. Confirmed congenital syphilis: IV penicillin G 50,000 units/kg q12h × 10 days. LP if CNS involvement suspected. Follow serial RPR titers to confirm treatment response." },
-  ];
-  return (<Page title="Maternal Infections" onBack={onBack}>{items.map(it => <div key={it.title} style={{ ...s.card, marginTop: 8 }}><div style={{ fontWeight: 700, fontSize: s.sz(14), color: t.tea, marginBottom: 4 }}>{it.title}</div><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>{it.content}</div></div>)}</Page>);
+  return (
+    <Page title="Maternal Infections" onBack={onBack}>
+
+      <InfectionCard t={t} s={s} title="Group B Streptococcus (GBS)" reference='See AAP Clinical Report: "Management of Infants at Risk for Group B Streptococcal Disease" (Puopolo et al., Pediatrics 2019).' bullets={[
+        <span><strong>Adequate prophylaxis:</strong> Penicillin G, ampicillin, or cefazolin given at least 4 hours before delivery. Clindamycin or vancomycin alone are not adequate for neonatal risk assessment.</span>,
+        <span><strong>Sepsis Calculator:</strong> <a href="https://neonatalsepsiscalculator.kaiserpermanente.org/InfectionProbabilityCalculator.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.tea, fontWeight: 600 }}>Open Neonatal Sepsis Calculator →</a></span>,
+        { text: <span><strong>Enhanced Observation approach:</strong></span>, sub: [
+          <span>Signs of illness at birth → blood cultures and empiric antibiotics. Consider lumbar puncture for critically ill infants.</span>,
+          <span>Maternal temp ≥38°C or inadequate GBS prophylaxis → serial exams and vital signs for 36 to 48 hours. Cultures and antibiotics only if signs of illness develop.</span>,
+          <span>No risk factors → routine newborn care.</span>,
+        ]},
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Prolonged Rupture of Membranes (PROM)" bullets={[
+        <span><strong>Definition:</strong> Membranes ruptured for 18 hours or more before delivery.</span>,
+        <span><strong>Enhanced observation:</strong> Consider Q4 vital signs; consider monitoring for 36 to 48 hours minimum before discharge.</span>,
+        <span><strong>Maternal fever or intraamniotic infection:</strong> Monitor with Q4 vital signs and evaluate for sepsis with a CBC, blood culture, and consideration of empiric antibiotics depending on sepsis risk score and clinical status. May obtian CRP at 12 hours of age and again the following day. <a href="https://neonatalsepsiscalculator.kaiserpermanente.org/InfectionProbabilityCalculator.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.tea, fontWeight: 600 }}>Open Neonatal Sepsis Calculator →</a></span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Hepatitis B" reference='See AAP Red Book' bullets={[
+        { text: <span><strong>Birthing parent HBsAg positive:</strong></span>, sub: [
+          <span>All newborns at all birth weights: Hepatitis B vaccine <strong>and</strong> HBIG within 12 hours of birth.</span>,
+        ]},
+        { text: <span><strong>Birthing parent HBsAg negative:</strong></span>, sub: [
+          <span>Birth weight ≥2000 g: Hepatitis B vaccine within 24 hours of birth.</span>,
+          <span>Birth weight &lt;2000 g: Hepatitis B vaccine at 1 month of age or at hospital discharge, whichever is first.</span>,
+        ]},
+        { text: <span><strong>Birthing parent HBsAg unknown:</strong></span>, sub: [
+          <span>All newborns at all birth weights: Hepatitis B vaccine within 12 hours of birth.</span>,
+          <span>Birth weight ≥2000 g: Give HBIG within 7 days of birth if parent's status is confirmed positive, or by 7 days of life or at hospital discharge (whichever is first) if status remains unknown.</span>,
+          <span>Birth weight &lt;2000 g: Give HBIG within 12 hours of birth unless parent's status is confirmed negative by that time.</span>,
+        ]},
+        <span><strong>Note:</strong> For newborns with birth weight &lt;2000 g, the birth dose will not count toward total doses in the series.</span>,
+        <span><strong>Follow-up testing:</strong> Check HBsAg and anti-HBs at 9 to 12 months of age to confirm the infant is protected and not infected.</span>,
+        <span><strong>Breastfeeding:</strong> Safe and should be encouraged once the infant has received the vaccine and HBIG.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Hepatitis C" reference="See AAP Red Book" bullets={[
+        <span><strong>No prophylaxis available:</strong> There is currently no vaccine or postexposure prophylaxis for hepatitis C. The goal is early identification of infected infants.</span>,
+        <span><strong>Testing:</strong> Hepatitis C RNA (HCV RNA) at 2 to 6 months of age, and/or hepatitis C antibody (anti-HCV) at 18 months or older. Antibody testing before 18 months is unreliable due to maternal antibodies.</span>,
+        <span><strong>Breastfeeding:</strong> Considered safe unless the mother has cracked or bleeding nipples.</span>,
+        <span><strong>Referral:</strong> Infants who test positive should be referred to pediatric gastroenterology for monitoring and potential treatment.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="HIV" reference="See AAP Red Book and the HHS Perinatal HIV Guidelines for detailed risk stratification and antiretroviral prophylaxis regimens." bullets={[
+        <span><strong>Timing:</strong> Antiretroviral therapy should be started within 6 hours of birth. Consult infectious diseases STAT.</span>,
+        <span><strong>Low risk</strong> (mother on antiretroviral therapy with suppressed viral load): Zidovudine (ZDV) for 4 weeks.</span>,
+        <span><strong>High risk</strong> (detectable viral load near delivery, no prenatal care, or new diagnosis at delivery): Three-drug regimen of zidovudine, lamivudine, and nevirapine.</span>,
+        <span><strong>Breastfeeding:</strong> Not recommended in resource-rich settings due to the risk of postnatal transmission.</span>,
+        <span><strong>Testing schedule:</strong> HIV PCR at birth, 14 to 21 days, 1 to 2 months, and 4 to 6 months.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Herpes Simplex Virus (HSV)" reference='See AAP Red Book' bullets={[
+        <span><strong>Delivery:</strong> Cesarean delivery is recommended if active genital lesions are present at the time of delivery.</span>,
+        { text: <span><strong>Asymptomatic infant — mother with known recurrent HSV:</strong></span>, sub: [
+          <span>Obtain surface cultures (conjunctivae, mouth, nasopharynx, rectum — may combine into one viral transport tube) and HSV blood PCR at approximately 24 hours of life.</span>,
+          <span>Preemptive acyclovir is not required if the infant remains well-appearing.</span>,
+        ]},
+        { text: <span><strong>Asymptomatic infant — mother with no history of genital herpes but lesions at delivery (possible primary infection):</strong></span>, sub: [
+          <span>Send maternal HSV-1 and HSV-2 type-specific IgG to determine if the outbreak is primary versus recurrent.</span>,
+          <span>Full infant evaluation: surface viral cultures, HSV blood PCR, lumbar puncture with CSF HSV PCR, and serum ALT.</span>,
+          <span>Start IV acyclovir (60 mg/kg/day divided every 8 hours) pending results.</span>,
+        ]},
+        <span><strong>Symptomatic infant:</strong> If the infant develops any concerning signs (fever, lethargy, vesicles, seizures, irritability, thrombocytopenia), perform a full diagnostic evaluation and start IV acyclovir immediately.</span>,
+        <span><strong>Warning signs:</strong> Neonatal HSV can present as skin/eye/mouth disease (45%), CNS disease (30%), or disseminated disease (25%) — early recognition and treatment are critical.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Congenital Syphilis" reference="See AAP Red Book and CDC Sexually Transmitted Infections Treatment Guidelines for detailed evaluation and treatment algorithms for congenital syphilis." bullets={[
+        <span><strong>Maternal positive RPR or VDRL:</strong> Evaluate the infant with an RPR, complete blood count, and liver function tests. Perform a lumbar puncture if CNS involvement is suspected.</span>,
+        <span><strong>Treatment:</strong> Intravenous aqueous crystalline penicillin G at 50,000 units/kg every 12 hours for the first 7 days of life, then every 8 hours, for a total of 10 days.</span>,
+        <span><strong>Adequate maternal treatment:</strong> Completion of a stage-appropriate penicillin regimen at least 30 days before delivery with a documented decline in titers.</span>,
+        <span><strong>Follow-up:</strong> Serial RPR titers should be followed in the infant to confirm treatment response. Titers should decline and eventually become nonreactive.</span>,
+      ]} />
+
+    </Page>
+  );
 }
 
 function MaternalConditions({ onBack }) {
