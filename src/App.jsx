@@ -372,18 +372,7 @@ function GlucoseProtocol({ onBack }) {
   const [showPdf, setShowPdf] = useState(null);
   return (
     <Page title="Blood Glucose Screening" onBack={onBack}>
-      {showPdf && <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0.85)", display: "flex", flexDirection: "column" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "54px 16px 10px" }}>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => setShowPdf(1)} style={{ ...s.pill, fontSize: s.sz(12), background: showPdf === 1 ? t.pur : "rgba(255,255,255,0.15)", color: "#fff", border: "none" }}>Page 1</button>
-            <button onClick={() => setShowPdf(2)} style={{ ...s.pill, fontSize: s.sz(12), background: showPdf === 2 ? t.pur : "rgba(255,255,255,0.15)", color: "#fff", border: "none" }}>Page 2</button>
-          </div>
-          <button onClick={() => setShowPdf(null)} style={{ background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={18} /></button>
-        </div>
-        <div style={{ flex: 1, overflow: "auto", padding: "0 8px 20px", WebkitOverflowScrolling: "touch" }}>
-          <img src={`/glucose-protocol-p${showPdf}.png`} alt={`Protocol page ${showPdf}`} style={{ width: "100%", borderRadius: 8 }} />
-        </div>
-      </div>}
+      {showPdf !== null && <ImageViewer pages={["/glucose-protocol-p1.png", "/glucose-protocol-p2.png"]} activePage={showPdf} onClose={() => setShowPdf(null)} onPageChange={setShowPdf} />}
       <div style={{ display: "flex", gap: 6, padding: "14px 16px 4px" }}>
         {tabs.map(x => <button key={x.k} onClick={() => setTab(x.k)} style={{ ...s.pill, flex: 1, textAlign: "center", fontSize: s.sz(11), background: tab === x.k ? t.pur : t.surfaceSolid, color: tab === x.k ? "#fff" : t.text, boxShadow: tab === x.k ? `0 4px 12px ${t.pur}40` : "none" }}>{x.l}</button>)}
       </div>
@@ -393,7 +382,7 @@ function GlucoseProtocol({ onBack }) {
         <div style={s.secT}>Completion</div><div style={s.card}><div style={{ fontWeight: 700, fontSize: s.sz(12), color: t.pur, marginBottom: 4 }}>LGA / IDM:</div><div style={{ fontSize: s.sz(12) }}>≥ <strong>12 hrs</strong> AND 3 consecutive AC ≥ 45</div><div style={{ borderTop: `1px solid ${t.border}`, margin: "10px 0", paddingTop: 10 }}><div style={{ fontWeight: 700, fontSize: s.sz(12), color: t.pur, marginBottom: 4 }}>SGA / Late preterm:</div><div style={{ fontSize: s.sz(12) }}>≥ <strong>24 hrs</strong> AND 3 consecutive AC ≥ 45</div></div></div>
       </div>}
       {tab === "pathway" && <div>
-        <div style={{ padding: "16px 16px" }}><button onClick={() => setShowPdf(1)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.pur}12`, border: `1px solid ${t.pur}30`, color: t.pur, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Protocol PDF</button></div>
+        <div style={{ padding: "32px 16px 12px" }}><button onClick={() => setShowPdf(0)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.pur}12`, border: `1px solid ${t.pur}30`, color: t.pur, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Protocol PDF</button></div>
         <div style={s.secT}>Path A: First Feed</div>
         <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Feed within 1 hr of birth<br/>• POC glucose <strong>30 min AFTER</strong> feed (≤ 90 min)</div>
           <div style={{ marginTop: 10, padding: 12, background: t.redL, borderRadius: 12 }}><div style={{ fontWeight: 700, fontSize: s.sz(12), color: t.red }}>If &lt; 35:</div><div style={{ fontSize: s.sz(11), lineHeight: 1.7, marginTop: 3 }}>Glucose gel → feed → STS → notify MD → recheck 1 hr</div></div>
@@ -639,7 +628,105 @@ function RoutineNewborn({ onBack, onNav }) {
   ]} onTap={onNav} /></div></Page>);
 }
 
-function InfectionCard({ title, bullets, reference, t, s }) {
+function ImageViewer({ pages, activePage, onClose, onPageChange }) {
+  const containerRef = useRef(null);
+  const [scale, setScale] = useState(1);
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const pinchStart = useRef(null);
+  const panStart = useRef(null);
+  const lastTranslate = useRef({ x: 0, y: 0 });
+  const swipeStartX = useRef(0);
+  const swipeStartY = useRef(0);
+  const isSwiping = useRef(false);
+
+  // Reset transform when page changes
+  useEffect(() => { setScale(1); setTranslate({ x: 0, y: 0 }); lastTranslate.current = { x: 0, y: 0 }; }, [activePage]);
+
+  const onTouchStart = useCallback((e) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchStart.current = { dist: Math.sqrt(dx * dx + dy * dy), scale };
+      isSwiping.current = false;
+    } else if (e.touches.length === 1) {
+      if (scale > 1) {
+        panStart.current = { x: e.touches[0].clientX - translate.x, y: e.touches[0].clientY - translate.y };
+        isSwiping.current = false;
+      } else {
+        swipeStartX.current = e.touches[0].clientX;
+        swipeStartY.current = e.touches[0].clientY;
+        isSwiping.current = true;
+        panStart.current = null;
+      }
+    }
+  }, [scale, translate]);
+
+  const onTouchMove = useCallback((e) => {
+    if (e.touches.length === 2 && pinchStart.current) {
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const newScale = Math.min(Math.max(pinchStart.current.scale * (dist / pinchStart.current.dist), 1), 5);
+      setScale(newScale);
+      if (newScale === 1) { setTranslate({ x: 0, y: 0 }); lastTranslate.current = { x: 0, y: 0 }; }
+    } else if (e.touches.length === 1 && panStart.current && scale > 1) {
+      e.preventDefault();
+      const nx = e.touches[0].clientX - panStart.current.x;
+      const ny = e.touches[0].clientY - panStart.current.y;
+      setTranslate({ x: nx, y: ny });
+      lastTranslate.current = { x: nx, y: ny };
+    }
+  }, [scale]);
+
+  const onTouchEnd = useCallback((e) => {
+    pinchStart.current = null;
+    if (isSwiping.current && pages.length > 1 && scale <= 1) {
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - swipeStartX.current;
+      const dy = Math.abs(touch.clientY - swipeStartY.current);
+      if (Math.abs(dx) > 60 && dy < 100) {
+        if (dx < 0 && activePage < pages.length - 1) onPageChange(activePage + 1);
+        else if (dx > 0 && activePage > 0) onPageChange(activePage - 1);
+      }
+    }
+    panStart.current = null;
+    isSwiping.current = false;
+  }, [pages.length, activePage, onPageChange, scale]);
+
+  const onDoubleTap = useCallback(() => {
+    if (scale > 1) { setScale(1); setTranslate({ x: 0, y: 0 }); lastTranslate.current = { x: 0, y: 0 }; }
+    else { setScale(2.5); }
+  }, [scale]);
+  const lastTap = useRef(0);
+  const handleTap = useCallback((e) => {
+    const now = Date.now();
+    if (now - lastTap.current < 300) { e.preventDefault(); onDoubleTap(); }
+    lastTap.current = now;
+  }, [onDoubleTap]);
+
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: "rgba(0,0,0,0.92)", display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "54px 16px 10px" }}>
+        <div style={{ display: "flex", gap: 8 }}>
+          {pages.length > 1 && pages.map((_, i) => (
+            <button key={i} onClick={() => onPageChange(i)} style={{ padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 600, background: activePage === i ? "#8B5CF6" : "rgba(255,255,255,0.15)", color: "#fff", border: "none", cursor: "pointer" }}>Page {i + 1}</button>
+          ))}
+        </div>
+        <button onClick={onClose} style={{ background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: 36, height: 36, borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}><X size={18} /></button>
+      </div>
+      {pages.length > 1 && <div style={{ display: "flex", justifyContent: "center", gap: 6, paddingBottom: 8 }}>
+        {pages.map((_, i) => <div key={i} style={{ width: 6, height: 6, borderRadius: 3, background: activePage === i ? "#fff" : "rgba(255,255,255,0.3)", transition: "background 0.2s" }} />)}
+      </div>}
+      <div ref={containerRef} style={{ flex: 1, overflow: "hidden", touchAction: "none", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8px 20px" }}
+        onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onClick={handleTap}>
+        <img src={pages[activePage]} alt={`Page ${activePage + 1}`} style={{ width: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 8, transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`, transition: scale === 1 ? "transform 0.2s ease" : "none", userSelect: "none", WebkitUserSelect: "none", pointerEvents: "none" }} draggable={false} />
+      </div>
+    </div>
+  );
+}
+
+function InfectionCard({ title, bullets, reference, extraContent, t, s }) {
   const [open, setOpen] = useState(false);
   const liS = { fontSize: s.sz(12), lineHeight: 1.75, marginBottom: 6, paddingLeft: 4 };
   const subLiS = { fontSize: s.sz(11.5), lineHeight: 1.7, marginBottom: 4, paddingLeft: 2, color: t.text2 };
@@ -658,6 +745,7 @@ function InfectionCard({ title, bullets, reference, t, s }) {
               </ul>
             )}</li>)}
           </ul>
+          {extraContent}
           <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, fontStyle: "italic", lineHeight: 1.6, borderTop: `1px solid ${t.border}`, paddingTop: 8 }}>{reference}</div>
         </div>
       )}
@@ -667,12 +755,14 @@ function InfectionCard({ title, bullets, reference, t, s }) {
 
 function MaternalInfections({ onBack }) {
   const t = useT(); const s = useS();
+  const [showAlgo, setShowAlgo] = useState(false);
   return (
     <Page title="Maternal Infections" onBack={onBack}>
+      {showAlgo && <ImageViewer pages={["/syphilis-algorithm.png"]} activePage={0} onClose={() => setShowAlgo(false)} onPageChange={() => {}} />}
 
       <InfectionCard t={t} s={s} title="Group B Streptococcus (GBS)" reference='See AAP Clinical Report: "Management of Infants at Risk for Group B Streptococcal Disease" (Puopolo et al., Pediatrics 2019).' bullets={[
         <span><strong>Adequate prophylaxis:</strong> Penicillin G, ampicillin, or cefazolin given at least 4 hours before delivery. Clindamycin or vancomycin alone are not adequate for neonatal risk assessment.</span>,
-        <span><strong>Sepsis Calculator:</strong> <a href="https://neonatalsepsiscalculator.kaiserpermanente.org/InfectionProbabilityCalculator.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.tea, fontWeight: 600 }}>Open Neonatal Sepsis Calculator →</a></span>,
+        <span><a href="https://neonatalsepsiscalculator.kaiserpermanente.org/InfectionProbabilityCalculator.aspx" target="_blank" rel="noopener noreferrer" style={{ color: t.tea, fontWeight: 600 }}>Open Neonatal Sepsis Calculator →</a></span>,
         { text: <span><strong>Enhanced Observation approach:</strong></span>, sub: [
           <span>Signs of illness at birth → blood cultures and empiric antibiotics. Consider lumbar puncture for critically ill infants.</span>,
           <span>Maternal temp ≥38°C or inadequate GBS prophylaxis → serial exams and vital signs for 36 to 48 hours. Cultures and antibiotics only if signs of illness develop.</span>,
@@ -734,12 +824,26 @@ function MaternalInfections({ onBack }) {
         <span><strong>Warning signs:</strong> Neonatal HSV can present as skin/eye/mouth disease (45%), CNS disease (30%), or disseminated disease (25%) — early recognition and treatment are critical.</span>,
       ]} />
 
-      <InfectionCard t={t} s={s} title="Congenital Syphilis" reference="See AAP Red Book and CDC Sexually Transmitted Infections Treatment Guidelines for detailed evaluation and treatment algorithms for congenital syphilis." bullets={[
-        <span><strong>Maternal positive RPR or VDRL:</strong> Evaluate the infant with an RPR, complete blood count, and liver function tests. Perform a lumbar puncture if CNS involvement is suspected.</span>,
-        <span><strong>Treatment:</strong> Intravenous aqueous crystalline penicillin G at 50,000 units/kg every 12 hours for the first 7 days of life, then every 8 hours, for a total of 10 days.</span>,
-        <span><strong>Adequate maternal treatment:</strong> Completion of a stage-appropriate penicillin regimen at least 30 days before delivery with a documented decline in titers.</span>,
-        <span><strong>Follow-up:</strong> Serial RPR titers should be followed in the infant to confirm treatment response. Titers should decline and eventually become nonreactive.</span>,
-      ]} />
+      <InfectionCard t={t} s={s} title="Syphilis" reference='See AAP Red Book (2024–2027), Syphilis chapter, and CDC STI Treatment Guidelines for the complete evaluation and treatment algorithm.' bullets={[
+        { text: <span><strong>Evaluation of the infant (maternal reactive serology):</strong></span>, sub: [
+          <span>Infant RPR or VDRL (quantitative, to compare with maternal titer)</span>,
+          <span>CBC with differential and platelets</span>,
+          <span>CSF analysis (cell count, protein) and CSF VDRL</span>,
+          <span>Long-bone radiographs</span>,
+          <span>Liver function tests and other clinically indicated studies (chest radiograph, eye exam, auditory brainstem response)</span>,
+        ]},
+        { text: <span><strong>Treatment — Confirmed or probable congenital syphilis:</strong></span>, sub: [
+          <span>Aqueous crystalline penicillin G: 50,000 units/kg IV every 12 hours for the first 7 days of life, then every 8 hours, for a total of 10 days.</span>,
+        ]},
+        { text: <span><strong>Treatment — Less likely congenital syphilis (normal evaluation, adequate maternal treatment):</strong></span>, sub: [
+          <span>Benzathine penicillin G: 50,000 units/kg IM as a single dose.</span>,
+          <span>If any part of the evaluation is abnormal, not performed, or follow-up is uncertain, treat with the full 10-day IV penicillin G course instead.</span>,
+        ]},
+        <span><strong>Adequate maternal treatment:</strong> Completion of a stage-appropriate penicillin regimen at least 30 days before delivery, with a documented decline in titers.</span>,
+        <span><strong>Infant follow-up:</strong> Repeat the infant's RPR or VDRL every 2 to 3 months after treatment until nonreactive. The infant's titers should decline by 3 months and be nonreactive by 6 months if adequately treated.</span>,
+      ]} extraContent={
+        <div style={{ padding: "32px 16px" }}><button onClick={() => setShowAlgo(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.tea}12`, border: `1px solid ${t.tea}30`, color: t.tea, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Syphilis Algorithm</button></div>
+      } />
 
     </Page>
   );
@@ -747,13 +851,90 @@ function MaternalInfections({ onBack }) {
 
 function MaternalConditions({ onBack }) {
   const t = useT(); const s = useS();
-  const items = [
-    { title: "Diabetes (IDM)", content: "Risk: hypoglycemia, macrosomia, polycythemia, hypoCa, hypoMg, hyperbili, cardiomyopathy. Screen glucose per protocol. Echo if resp distress." },
-    { title: "HTN / Pre-eclampsia", content: "May be SGA/IUGR. Risk: thrombocytopenia, neutropenia. MgSO4 → hypotonia. Labetalol → ↓HR, ↓glucose." },
-    { title: "Thyroid (Graves)", content: "TRAb(+)/unknown → T4/TSH day 3–5 & 10–14. Hyper: methimazole 0.2–0.5 mg/kg/d. Hypo: levo 10 μg/kg/d." },
-    { title: "Substance Use", content: "Risk: NOWS, prematurity, SGA. Opioid exposed → Eat Sleep Console. Non-pharm first: swaddle, STS, quiet." },
-  ];
-  return (<Page title="Maternal Conditions" onBack={onBack}>{items.map(it => <div key={it.title} style={{ ...s.card, marginTop: 8 }}><div style={{ fontWeight: 700, fontSize: s.sz(14), color: t.pur, marginBottom: 4 }}>{it.title}</div><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>{it.content}</div></div>)}</Page>);
+  return (
+    <Page title="Maternal Conditions" onBack={onBack}>
+
+      <InfectionCard t={t} s={s} title="Infant of a Diabetic Mother (IDM)" reference="See AAP guidelines on neonatal hypoglycemia screening for glucose management protocols." bullets={[
+        { text: <span><strong>Risks to the newborn:</strong></span>, sub: [
+          <span>Hypoglycemia (screen per institutional glucose protocol)</span>,
+          <span>Macrosomia and birth injury</span>,
+          <span>Polycythemia and hyperviscosity</span>,
+          <span>Hypocalcemia and hypomagnesemia</span>,
+          <span>Hyperbilirubinemia</span>,
+          <span>Hypertrophic cardiomyopathy</span>,
+        ]},
+        <span><strong>Glucose screening:</strong> Begin within 1 hour of birth per protocol. See the Blood Glucose Screening section for the full pathway.</span>,
+        <span><strong>Echocardiogram:</strong> Consider if the infant develops respiratory distress, a murmur, or signs of heart failure.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Hypertension / Pre-eclampsia" bullets={[
+        <span><strong>Growth restriction:</strong> Infants may be small for gestational age due to chronic placental insufficiency. Plot birth weight on Fenton or appropriate growth chart.</span>,
+        { text: <span><strong>Neonatal risks:</strong></span>, sub: [
+          <span>Thrombocytopenia and neutropenia (may persist for several days)</span>,
+          <span>Hypoglycemia (especially if mother received labetalol)</span>,
+        ]},
+        { text: <span><strong>Maternal medication effects on the newborn:</strong></span>, sub: [
+          <span>Magnesium sulfate: may cause hypotonia, respiratory depression, and poor feeding in the first 24 to 48 hours</span>,
+          <span>Labetalol: may cause bradycardia and hypoglycemia</span>,
+        ]},
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Thyroid — Hyperthyroidism (Graves' Disease)" reference={`See van der Kaay et al., "Management of Neonates Born to Mothers With Graves' Disease" (Pediatrics, 2016) for the complete algorithm.`} bullets={[
+        { text: <span><strong>Risk stratification:</strong></span>, sub: [
+          <span>Maternal TRAb positive or unknown in the 2nd or 3rd trimester → infant is "at risk" and requires monitoring</span>,
+          <span>Maternal TRAb negative → low-risk newborn, no specific thyroid follow-up needed</span>,
+        ]},
+        { text: <span><strong>Testing schedule for at-risk infants:</strong></span>, sub: [
+          <span>Day of life 1: history and physical examination; send TRAb in cord blood if assay is available</span>,
+          <span>Day of life 3 to 5: repeat history and physical; send fT4 and TSH; if abnormal, see treatment below</span>,
+          <span>Day of life 10 to 14: repeat history and physical; repeat fT4 and TSH; send TRAb if not yet done</span>,
+        ]},
+        <span><strong>If TRAb negative and infant asymptomatic with normal thyroid function:</strong> No further thyroid-specific follow-up is needed.</span>,
+        { text: <span><strong>Signs of neonatal hyperthyroidism:</strong></span>, sub: [
+          <span>Tachycardia, irritability, poor weight gain, diarrhea, flushing</span>,
+          <span>Goiter, stare or eyelid retraction, warm moist skin, small fontanelle</span>,
+          <span>Severe cases: heart failure, hypertension, respiratory distress</span>,
+        ]},
+        { text: <span><strong>Treatment of neonatal hyperthyroidism:</strong></span>, sub: [
+          <span>Methimazole (MMI): 0.2 to 0.5 mg/kg/day divided in 2 doses</span>,
+          <span>Sympathetic hyperactivity: add propranolol 2 mg/kg/day in 2 doses for 1 to 2 weeks</span>,
+          <span>Refractory or hemodynamically unstable: Lugol solution 1 drop (0.05 mL) 3 times daily or potassium iodide 1 drop daily, given at least 1 hour after the first MMI dose</span>,
+          <span>Treatment duration is typically 1 to 2 months as TRAb clears from the infant's circulation</span>,
+        ]},
+        <span><strong>Note:</strong> Maternal antithyroid drugs can delay presentation of neonatal hyperthyroidism. Follow the same testing schedule even if the mother was treated during pregnancy.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Thyroid — Hypothyroidism" reference="See AAP and state newborn screening guidelines for congenital hypothyroidism management." bullets={[
+        <span><strong>Newborn screening:</strong> All infants are screened via the state newborn screen (typically TSH-based). Results are usually available within 1 to 2 weeks of life.</span>,
+        { text: <span><strong>Signs of congenital hypothyroidism:</strong></span>, sub: [
+          <span>Poor feeding, lethargy, prolonged jaundice, hypotonia</span>,
+          <span>Dry skin, large fontanelle, distended abdomen, umbilical hernia</span>,
+          <span>Reduced linear growth</span>,
+        ]},
+        <span><strong>Treatment:</strong> Levothyroxine 10 to 15 μg/kg/day, started as soon as the diagnosis is confirmed. Early treatment is essential for normal neurodevelopment.</span>,
+        <span><strong>Infants born to mothers with Graves' disease:</strong> Central or primary hypothyroidism can also occur in these infants due to transplacental passage of TSH-receptor blocking antibodies. Monitor fT4 and TSH at the same intervals as for hyperthyroidism risk.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Substance Use" reference="See AAP Clinical Report on NOWS, the Eat Sleep Console model, and AAP policy on contraindications to breastfeeding." bullets={[
+        { text: <span><strong>Safety of mother's milk:</strong></span>, sub: [
+          <span><strong>Safe:</strong> Stable methadone or buprenorphine maintenance without active illicit use. May reduce NOWS severity.</span>,
+          <span><strong>Contraindicated:</strong> Active cocaine, PCP, or illicit stimulant use. Relapse into illicit drug use within 30 days of delivery.</span>,
+          <span><strong>Case-by-case:</strong> Marijuana — AAP recommends against due to limited infant safety data.</span>,
+          <span><strong>HIV:</strong> Contraindicated in resource-rich settings. <strong>Hep C:</strong> avoid if cracked or bleeding nipples.</span>,
+        ]},
+        { text: <span><strong>Suggested minimum observation:</strong></span>, sub: [
+          <span>Opioid-exposed infants: minimum 3 to 5 days (longer-acting opioids such as methadone may require 5 to 7 days)</span>,
+          <span>Stimulant-exposed (cocaine, amphetamines): 24 to 48 hours for acute toxicity signs</span>,        ]},
+        { text: <span><strong>Eat Sleep Console (ESC) for NOWS:</strong></span>, sub: [
+          <span><strong>Eat:</strong> Can the infant eat at least 1 oz or breastfeed well?</span>,
+          <span><strong>Sleep:</strong> Can the infant sleep at least 1 hour undisturbed?</span>,
+          <span><strong>Console:</strong> Can the infant be consoled within 10 minutes?</span>,
+          <span>Non-pharmacologic first: swaddling, skin-to-skin, low stimulation, rooming-in. If ESC criteria consistently not met, start morphine or methadone per institutional protocol.</span>,
+        ]},
+      ]} />
+
+    </Page>
+  );
 }
 
 function ObstetricFactors({ onBack }) {
