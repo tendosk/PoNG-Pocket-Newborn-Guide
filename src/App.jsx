@@ -66,7 +66,7 @@ const mkS = (t) => ({
   mDs: { fontSize: 11, color: t.text2, marginTop: 2 },
   chv: { marginLeft: "auto", color: t.text3, fontSize: 16, opacity: 0.5 },
   pill: { display: "inline-block", padding: "7px 14px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", border: "none", transition: "all 0.2s ease" },
-  tH: { background: t.mode === "dark" ? t.bg3 : "#0F172A", color: "#F8FAFC", fontWeight: 600, fontSize: 11, padding: "10px 8px", textAlign: "center", borderRight: `1px solid ${t.mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.2)"}` },
+  tH: { background: t.mode === "dark" ? t.bg3 : "#0F172A", color: "#F8FAFC", fontWeight: 600, fontSize: 11, padding: "10px 8px", textAlign: "center", borderRight: `1px solid ${t.mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.2)"}`, borderBottom: `1px solid ${t.border}` },
   tC: { padding: "10px 8px", textAlign: "center", fontSize: 12, borderBottom: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`, color: t.text },
   cnt: { paddingBottom: 90 },
   info: (accent) => ({ background: t.mode === "dark" ? `${accent}15` : `${accent}12`, border: `1px solid ${accent}30`, borderRadius: 14, padding: "14px 16px", margin: "0 16px 10px", fontSize: 12, lineHeight: 1.6, color: t.text }),
