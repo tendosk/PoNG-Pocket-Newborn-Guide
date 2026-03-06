@@ -135,7 +135,7 @@ const SEARCH_INDEX = [
   { id: "delivery", label: "Delivery & NRP", desc: "Neonatal resuscitation program birth APGAR equipment", section: "Newborn" },
   { id: "routine", label: "Routine Newborn Care", desc: "Well baby nursery maternal factors medications screenings", section: "Newborn" },
   { id: "sepsis", label: "Early Onset Sepsis", desc: "EOS risk assessment kaiser sepsis calculator antibiotics GBS", section: "Newborn" },
-  { id: "complications", label: "Complications", desc: "Hypothermia NOWS TTN transient tachypnea withdrawal", section: "Newborn" },
+  { id: "complications", label: "Complications", desc: "Hypothermia TTN transient tachypnea extracranial injuries birth trauma", section: "Newborn" },
   // Routine care sub-pages
   { id: "infections", label: "Maternal Infections", desc: "GBS PROM hepatitis B C HIV HSV syphilis", section: "Routine Care" },
   { id: "maternal_conditions", label: "Maternal Conditions", desc: "Diabetes HTN thyroid Graves substance use IDM pre-eclampsia", section: "Routine Care" },
@@ -154,7 +154,7 @@ const SEARCH_INDEX = [
   { id: "resuscmeds", label: "Resuscitation Meds", desc: "Epinephrine normal saline volume expansion emergency NRP", section: "Delivery" },
   // Complications sub-pages
   { id: "hypothermia", label: "Hypothermia", desc: "Cold stress temperature prevention rewarming management", section: "Complications" },
-  { id: "nows", label: "NOWS / ESC", desc: "Neonatal opioid withdrawal eat sleep console Finnegan", section: "Complications" },
+  { id: "nows", label: "NOWS / ESC", desc: "Neonatal opioid withdrawal eat sleep console Finnegan", section: "ICN" },
   { id: "ttn", label: "TTN", desc: "Transient tachypnea newborn respiratory distress tachypnea", section: "Complications" },
   { id: "extracranial", label: "Extracranial Injuries", desc: "Caput succedaneum cephalohematoma subgaleal hemorrhage birth trauma scalp", section: "Complications" },
   // ICN
@@ -1114,7 +1114,6 @@ function ComplicationsNav({ onBack, onNav }) {
   const t = useT();
   return (<Page title="Other Complications" onBack={onBack}><div style={{ marginTop: 12 }}><MenuList items={[
     { id: "hypothermia", label: "Hypothermia", desc: "Prevention & management", icon: <Thermometer size={18} />, color: t.acc },
-    { id: "nows", label: "NOWS / ESC", desc: "Opioid withdrawal", icon: <Pill size={18} />, color: t.pur },
     { id: "ttn", label: "TTN", desc: "Transient tachypnea", icon: <Wind size={18} />, color: t.tea },
     { id: "extracranial", label: "Extracranial Injuries", desc: "Birth trauma scalp injuries", icon: <CircleAlert size={18} />, color: t.red },
   ]} onTap={onNav} /></div></Page>);
@@ -1430,8 +1429,7 @@ function NewbornHome({ onNav }) {
     { id: "nbs", label: "Newborn Screen", desc: "Metabolic screening", icon: <TestTubes size={18} />, color: t.pur },
     { id: "glucose", label: "Glucose Screening", desc: "Hypoglycemia protocol", icon: <Droplets size={18} />, color: t.pur },
     { id: "additional_screenings", label: "Additional Screenings", desc: "CMV, pelviectasis", icon: <Search size={18} />, color: t.tea },
-    { id: "sepsis", label: "Early Onset Sepsis", desc: "Risk & management", icon: <Bug size={18} />, color: t.org },
-    { id: "complications", label: "Complications", desc: "Hypothermia, NOWS, TTN", icon: <AlertTriangle size={18} />, color: t.ylw },
+    { id: "complications", label: "Complications", desc: "Hypothermia, TTN, extracranial injuries", icon: <AlertTriangle size={18} />, color: t.ylw },
   ];
   return (
     <div>
@@ -1472,11 +1470,13 @@ function DeliverySection({ onBack, onNav }) {
 
 function ICNHome({ onNav }) {
   const t = useT(); const s = useS();
-  return (<div><div style={{ ...s.hdr, paddingTop: 92 }}><div style={s.hdrT}>ICN</div></div><div style={s.cnt}><div style={{ marginTop: 14 }}><MenuList items={[
+  return (<div><div style={{ ...s.hdr, paddingTop: 92 }}><div style={s.hdrT}>ICN</div></div><div style={s.cnt}><SearchBar onNav={onNav} /><div style={{ marginTop: 14 }}><MenuList items={[
     { id: "uvcuac", label: "UVC / UAC", desc: "Line depth calculator", icon: <Ruler size={18} />, color: t.red },
     { id: "resuscmeds", label: "Resuscitation Meds", desc: "Emergency formulary", icon: <Pill size={18} />, color: t.pur },
     { id: "sarnat", label: "Modified Sarnat", desc: "HIE staging", icon: <Brain size={18} />, color: t.org },
     { id: "cooling", label: "Therapeutic Hypothermia", desc: "Cooling protocol", icon: <Snowflake size={18} />, color: t.acc },
+    { id: "sepsis", label: "Early Onset Sepsis", desc: "Risk & management", icon: <Bug size={18} />, color: t.org },
+    { id: "nows", label: "NOWS / ESC", desc: "Opioid withdrawal", icon: <Pill size={18} />, color: t.pur },
   ]} onTap={onNav} /></div></div></div>);
 }
 
