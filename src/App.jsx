@@ -139,7 +139,7 @@ const SEARCH_INDEX = [
   // Routine care sub-pages
   { id: "infections", label: "Maternal Infections", desc: "GBS PROM hepatitis B C HIV HSV syphilis", section: "Routine Care" },
   { id: "maternal_conditions", label: "Maternal Conditions", desc: "Diabetes HTN thyroid Graves substance use IDM pre-eclampsia", section: "Routine Care" },
-  { id: "obstetric", label: "Obstetric Factors", desc: "Delivery mode meconium cesarean vacuum forceps medications", section: "Routine Care" },
+  { id: "obstetric", label: "Obstetric & Birth Factors", desc: "Delivery mode meconium cesarean vacuum forceps medications", section: "Routine Care" },
   { id: "neonatal_meds", label: "Neonatal Medications", desc: "Vitamin K Hep B vaccine erythromycin Beyfortus nirsevimab RSV", section: "Routine Care" },
   { id: "feeding", label: "Feeding", desc: "Breastfeeding donor milk formula lactation latch colostrum", section: "Routine Care" },
   { id: "voiding", label: "Voiding & Stooling", desc: "Wet diapers meconium stool patterns day of life", section: "Routine Care" },
@@ -155,6 +155,7 @@ const SEARCH_INDEX = [
   { id: "hypothermia", label: "Hypothermia", desc: "Cold stress temperature prevention rewarming management", section: "Complications" },
   { id: "nows", label: "NOWS / ESC", desc: "Neonatal opioid withdrawal eat sleep console Finnegan", section: "Complications" },
   { id: "ttn", label: "TTN", desc: "Transient tachypnea newborn respiratory distress tachypnea", section: "Complications" },
+  { id: "extracranial", label: "Extracranial Injuries", desc: "Caput succedaneum cephalohematoma subgaleal hemorrhage birth trauma scalp", section: "Complications" },
   // ICN
   { id: "uvcuac", label: "UVC / UAC Calculator", desc: "Umbilical venous arterial catheter insertion depth line", section: "ICN" },
   { id: "sarnat", label: "Modified Sarnat", desc: "HIE hypoxic ischemic encephalopathy staging consciousness tone", section: "ICN" },
@@ -624,7 +625,7 @@ function RoutineNewborn({ onBack, onNav }) {
   return (<Page title="Maternal Factors" onBack={onBack}><div style={{ marginTop: 12 }}><MenuList items={[
     { id: "infections", label: "Maternal Infections", desc: "GBS, PROM, Hep B/C, HIV, HSV, Syphilis", icon: <Bug size={18} />, color: t.tea },
     { id: "maternal_conditions", label: "Maternal Conditions", desc: "Diabetes, HTN, Thyroid, Substance use", icon: <PersonStanding size={18} />, color: t.pur },
-    { id: "obstetric", label: "Obstetric Factors", desc: "Delivery mode, meconium, meds", icon: <Hospital size={18} />, color: t.acc },
+    { id: "obstetric", label: "Obstetric & Birth Factors", desc: "Delivery mode, meconium, meds", icon: <Hospital size={18} />, color: t.acc },
   ]} onTap={onNav} /></div></Page>);
 }
 
@@ -939,9 +940,50 @@ function MaternalConditions({ onBack }) {
 
 function ObstetricFactors({ onBack }) {
   const t = useT(); const s = useS();
-  return (<Page title="Obstetric Factors" onBack={onBack}>
-    {[{ title: "Delivery Mode", c: "Vaginal: ↓TTN risk. C/S without labor: ↑TTN. Operative: monitor for cephalohematoma, subgaleal hemorrhage." },{ title: "Meconium", c: "Vigorous → routine care. Not vigorous → resus steps, intubation for suction NOT routine. Monitor for MAS." },{ title: "Maternal Meds", c: "Opioids → resp depression (naloxone). MgSO4 → hypotonia. SSRIs → adaptation syndrome. Beta-blockers → ↓HR/glucose." }].map(it => <div key={it.title} style={{ ...s.card, marginTop: 8 }}><div style={{ fontWeight: 700, fontSize: s.sz(14), color: t.acc, marginBottom: 4 }}>{it.title}</div><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>{it.c}</div></div>)}
-  </Page>);
+  return (
+    <Page title="Obstetric & Birth Factors" onBack={onBack}>
+
+      <InfectionCard t={t} s={s} title="Delivery Mode" bullets={[
+        { text: <span><strong>Vaginal delivery:</strong></span>, sub: [
+          <span>Lower risk of transient tachypnea of the newborn (TTN)</span>,
+          <span>Operative vaginal delivery (forceps or vacuum): monitor for cephalohematoma, caput succedaneum, and subgaleal hemorrhage</span>,
+        ]},
+        { text: <span><strong>Cesarean delivery:</strong></span>, sub: [
+          <span>Without labor: increased risk of TTN due to delayed lung fluid clearance</span>,
+          <span>Monitor respiratory status closely in the first 2 to 4 hours</span>,
+        ]},
+        <span><strong>Subgaleal hemorrhage:</strong> Can present with a fluctuant, boggy scalp swelling that crosses suture lines. This is a medical emergency — monitor for pallor, tachycardia, and falling hematocrit.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Meconium-Stained Amniotic Fluid" bullets={[
+        <span><strong>Vigorous infant:</strong> Routine care. Suctioning of the airway is not required.</span>,
+        <span><strong>Non-vigorous infant:</strong> Begin standard resuscitation steps (warmth, stimulation, PPV if needed). Routine intubation for tracheal suctioning is no longer recommended.</span>,
+        { text: <span><strong>Monitor for meconium aspiration syndrome (MAS):</strong></span>, sub: [
+          <span>Respiratory distress (tachypnea, grunting, retractions) within the first hours of life</span>,
+          <span>May require supplemental oxygen, CPAP, or mechanical ventilation</span>,
+          <span>Chest radiograph if symptomatic: hyperinflation with patchy opacities</span>,
+        ]},
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Maternal Medications at Delivery" bullets={[
+        { text: <span><strong>Opioids</strong> (given during labor for pain):</span>, sub: [
+          <span>May cause respiratory depression, decreased tone, and poor feeding</span>,
+          <span>Naloxone is generally not recommended in neonatal resuscitation per NRP</span>,
+        ]},
+        { text: <span><strong>Magnesium sulfate:</strong></span>, sub: [
+          <span>Hypotonia, respiratory depression, and poor feeding in the first 24 to 48 hours</span>,
+          <span>Effects are dose-dependent and self-limited</span>,
+        ]},
+        { text: <span><strong>SSRIs / SNRIs:</strong></span>, sub: [
+          <span>Neonatal adaptation syndrome: jitteriness, irritability, poor feeding, and respiratory distress in the first few days</span>,
+          <span>Usually mild and self-limited. Supportive care only.</span>,
+        ]},
+        <span><strong>Beta-blockers</strong> (labetalol, propranolol): may cause neonatal bradycardia and hypoglycemia. Monitor heart rate and glucose.</span>,
+        <span><strong>General anesthesia:</strong> May cause transient respiratory depression and decreased tone at birth.</span>,
+      ]} />
+
+    </Page>
+  );
 }
 
 function NeonatalMeds({ onBack }) {
@@ -1020,6 +1062,7 @@ function ComplicationsNav({ onBack, onNav }) {
     { id: "hypothermia", label: "Hypothermia", desc: "Prevention & management", icon: <Thermometer size={18} />, color: t.acc },
     { id: "nows", label: "NOWS / ESC", desc: "Opioid withdrawal", icon: <Pill size={18} />, color: t.pur },
     { id: "ttn", label: "TTN", desc: "Transient tachypnea", icon: <Wind size={18} />, color: t.tea },
+    { id: "extracranial", label: "Extracranial Injuries", desc: "Birth trauma scalp injuries", icon: <CircleAlert size={18} />, color: t.red },
   ]} onTap={onNav} /></div></Page>);
 }
 
@@ -1053,6 +1096,55 @@ function TTN({ onBack }) {
     <div style={s.secT}>Diagnosis</div><div style={{ ...s.card, borderLeft: `4px solid ${t.org}` }}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}><strong>Exclusion dx.</strong> R/o RDS, PNA, PTX, CHD. CXR: perihilar streaking, fluid in fissures. Resolves 24–72 hrs.</div></div>
     <div style={s.secT}>Management</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.7 }}>Supportive. O2 for SpO2 ≥92%. CPAP PRN. NPO if RR &gt;60–80. No diuretics. Empiric abx if sepsis possible.</div></div>
   </Page>);
+}
+
+function ExtracranialInjuries({ onBack }) {
+  const t = useT(); const s = useS();
+  const [showImg, setShowImg] = useState(false);
+  return (
+    <Page title="Extracranial Injuries" onBack={onBack}>
+      {showImg && <ImageViewer pages={["/extracranial-injuries.jpg"]} activePage={0} onClose={() => setShowImg(false)} onPageChange={() => {}} />}
+
+      <div style={{ padding: "32px 16px 12px" }}><button onClick={() => setShowImg(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.red}12`, border: `1px solid ${t.red}30`, color: t.red, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Anatomy Diagram</button></div>
+
+      <InfectionCard t={t} s={s} title="Caput Succedaneum" bullets={[
+        <span><strong>What it is:</strong> Soft, diffuse swelling of the scalp caused by pressure against the dilating cervix during labor. It crosses suture lines.</span>,
+        <span><strong>Appearance:</strong> Boggy, pitting edema that may extend across the midline. Often present at birth. May include bruising or petechiae.</span>,
+        <span><strong>Course:</strong> Benign and self-resolving, typically within 24 to 48 hours. No treatment needed.</span>,
+        <span><strong>Key distinction:</strong> Crosses suture lines (unlike cephalohematoma). Not fluctuant.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Cephalohematoma" bullets={[
+        <span><strong>What it is:</strong> Subperiosteal collection of blood. Confined to a single cranial bone because the periosteum is tightly bound at suture lines.</span>,
+        <span><strong>Appearance:</strong> Firm, well-circumscribed swelling that does not cross suture lines. May not be apparent until hours after birth and can enlarge over the first day.</span>,
+        { text: <span><strong>Monitoring:</strong></span>, sub: [
+          <span>Track head circumference to detect expansion</span>,
+          <span>Monitor for jaundice — resorption of the hematoma increases bilirubin load</span>,
+          <span>Rarely associated with underlying linear skull fracture</span>,
+        ]},
+        <span><strong>Course:</strong> Resolves over 2 weeks to 3 months. Do not aspirate — risk of infection. May calcify if large.</span>,
+      ]} />
+
+      <InfectionCard t={t} s={s} title="Subgaleal Hemorrhage" reference="This is a medical emergency. If suspected, escalate care immediately." bullets={[
+        <span><strong>What it is:</strong> Bleeding into the potential space between the periosteum and the galea aponeurotica. This space can hold a significant volume of blood (up to 260 mL).</span>,
+        <span><strong>Risk factors:</strong> Vacuum-assisted delivery is the strongest risk factor. Also associated with forceps delivery and coagulopathy.</span>,
+        <span><strong>Appearance:</strong> Fluctuant, boggy swelling that crosses suture lines and may shift with repositioning. Swelling increases over hours.</span>,
+        { text: <span><strong>Warning signs:</strong></span>, sub: [
+          <span>Increasing head circumference</span>,
+          <span>Pallor, tachycardia, hypotension</span>,
+          <span>Falling hematocrit</span>,
+        ]},
+        { text: <span><strong>Management:</strong></span>, sub: [
+          <span>Serial head circumference measurements (every 2 to 4 hours initially)</span>,
+          <span>Serial hemoglobin and hematocrit</span>,
+          <span>Type and crossmatch — transfusion may be required</span>,
+          <span>Coagulation studies and correction of any coagulopathy</span>,
+          <span>Volume resuscitation as needed</span>,
+        ]},
+      ]} />
+
+    </Page>
+  );
 }
 
 function TherapeuticHypothermia({ onBack }) {
@@ -1376,6 +1468,7 @@ export default function NewbornPocketPro() {
     if (p === "hypothermia") return <Hypothermia onBack={goBack} />;
     if (p === "nows") return <NOWS onBack={goBack} />;
     if (p === "ttn") return <TTN onBack={goBack} />;
+    if (p === "extracranial") return <ExtracranialInjuries onBack={goBack} />;
     if (activeTab === "newborn") return <NewbornHome onNav={goTo} />;
     if (activeTab === "icn") return <ICNHome onNav={goTo} />;
     if (activeTab === "links") return <LinksSection />;
