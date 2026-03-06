@@ -1,6 +1,6 @@
 import { useState, useCallback, createContext, useContext, useEffect, useRef, Fragment } from "react";
 import {
-  Baby, Heart, Frown, Dumbbell, Wind, Hospital, Link2, ClipboardList, Settings,
+  Baby, Heart, Frown, Wind, Hospital, Link2, Settings,
   Syringe, Thermometer, Pill, FlaskConical, Stethoscope, Scale, BarChart3,
   Brain, Bug, Activity, ShieldAlert, Snowflake, Wrench, Ruler, CircleAlert,
   Sun, Moon, Monitor, Eye, Ear, Milk, FileText, LineChart, HandHeart,
@@ -53,7 +53,7 @@ const useT = () => useContext(ThemeCtx);
 
 // ─── Shared Style Generators ─────────────────────────────────────────
 const mkS = (t) => ({
-  app: { maxWidth: 430, margin: "0 auto", fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif', background: t.bg, height: "100vh", color: t.text, fontSize: 15, lineHeight: 1.5, position: "relative", WebkitFontSmoothing: "antialiased", display: "flex", flexDirection: "column", overflow: "hidden" },
+  app: { width: "100%", margin: "0 auto", fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif', background: t.bg, height: "100dvh", color: t.text, fontSize: 15, lineHeight: 1.5, position: "relative", WebkitFontSmoothing: "antialiased", display: "flex", flexDirection: "column", overflow: "hidden" },
   hdr: { background: t.hdrGrad, color: t.mode === "dark" ? "#F8FAFC" : "#0F172A", padding: "60px 20px 16px", position: "sticky", top: 0, zIndex: 100, backdropFilter: "blur(20px)" },
   hdrT: { fontSize: 28, fontWeight: 800, letterSpacing: -0.5, fontFamily: '"Poppins", sans-serif', textShadow: t.mode === "dark" ? "0 0 20px rgba(96,165,250,0.4), 0 0 40px rgba(96,165,250,0.15)" : "none" },
   hdrS: { fontSize: 11, opacity: 0.6, marginTop: 2, fontWeight: 400 },
@@ -73,8 +73,8 @@ const mkS = (t) => ({
   sBdg: (bg, c) => ({ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 12, background: bg, color: c, fontSize: 18, fontWeight: 800, cursor: "pointer", border: "none", transition: "all 0.2s" }),
   menuList: { borderRadius: 16, overflow: "hidden", margin: "0 16px", border: `1px solid ${t.border}`, boxShadow: t.shadow },
   input: { width: "100%", padding: "14px 16px", fontSize: 18, fontWeight: 700, borderRadius: 14, border: `2px solid ${t.border}`, background: t.inputBg, color: t.text, outline: "none", boxSizing: "border-box", textAlign: "center", transition: "border-color 0.2s" },
-  brand: { fontFamily: '"Poppins", sans-serif', fontWeight: 800, background: "linear-gradient(135deg, #06D6A0 0%, #00E5CC 40%, #00F5D4 60%, #56FFF3 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: t.mode === "dark" ? "drop-shadow(0 0 12px rgba(6,214,160,0.5)) drop-shadow(0 0 30px rgba(0,229,204,0.25))" : "drop-shadow(0 0 10px rgba(6,214,160,0.35)) drop-shadow(0 0 25px rgba(0,229,204,0.15))" },
-  brandLogo: { background: "linear-gradient(135deg, #06D6A0 0%, #00E5CC 40%, #00F5D4 60%, #56FFF3 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: t.mode === "dark" ? "drop-shadow(0 0 14px rgba(6,214,160,0.6)) drop-shadow(0 0 35px rgba(0,229,204,0.3))" : "drop-shadow(0 0 10px rgba(6,214,160,0.4)) drop-shadow(0 0 25px rgba(0,229,204,0.2))" },
+  brand: { fontFamily: '"Poppins", sans-serif', fontWeight: 800, background: "linear-gradient(135deg, #06D6A0 0%, #00E5CC 40%, #00F5D4 60%, #56FFF3 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" },
+  brandLogo: { filter: "none" },
 });
 
 // ─── Helpers ─────────────────────────────────────────────────────────
@@ -239,7 +239,7 @@ const APGAR = [
   { name: "Appearance", sub: "(Skin Color)", icon: <Baby size={18} />, opts: [{ s: 0, l: "Blue/Pale all over" }, { s: 1, l: "Body pink, extremities blue" }, { s: 2, l: "Completely pink" }] },
   { name: "Pulse", sub: "(Heart Rate)", icon: <HeartPulse size={18} />, opts: [{ s: 0, l: "Absent" }, { s: 1, l: "< 100 bpm" }, { s: 2, l: "≥ 100 bpm" }] },
   { name: "Grimace", sub: "(Reflex Irritability)", icon: <Frown size={18} />, opts: [{ s: 0, l: "No response" }, { s: 1, l: "Grimace/weak cry" }, { s: 2, l: "Cry or pull away" }] },
-  { name: "Activity", sub: "(Muscle Tone)", icon: <Dumbbell size={18} />, opts: [{ s: 0, l: "Limp, no movement" }, { s: 1, l: "Some flexion" }, { s: 2, l: "Active motion, good flexion" }] },
+  { name: "Activity", sub: "(Muscle Tone)", icon: <PersonStanding size={18} />, opts: [{ s: 0, l: "Limp, no movement" }, { s: 1, l: "Some flexion" }, { s: 2, l: "Active motion, good flexion" }] },
   { name: "Respirations", sub: "(Breathing)", icon: <Wind size={18} />, opts: [{ s: 0, l: "Absent" }, { s: 1, l: "Slow, irregular, weak cry" }, { s: 2, l: "Good cry, regular" }] },
 ];
 
@@ -873,11 +873,13 @@ function OptionsTab({ themeMode, setThemeMode }) {
         <div style={s.secT}>About</div>
         <div style={s.card}>
           <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <div style={{ marginBottom: 12, display: "inline-block", color: "#00E5CC", filter: s.brandLogo.filter }}><Baby size={44} /></div>
-            <div style={{ ...s.brand, fontSize: 26, letterSpacing: -0.5 }}>PoNG</div>
-            <div style={{ fontSize: 12, color: t.text3, marginTop: 2 }}>Pocket Newborn Guide</div>
-            <div style={{ fontSize: 12, color: t.text3, marginTop: 4 }}>Version 1.0</div>
-            <div style={{ width: 40, height: 2, borderRadius: 1, background: "linear-gradient(90deg, #06D6A0, #00F5D4, #56FFF3)", margin: "16px auto" }} />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 4 }}>
+              <div style={{ color: "#00E5CC", display: "flex" }}><Baby size={32} /></div>
+              <div style={{ ...s.brand, fontSize: 30, letterSpacing: -0.5 }}>PoNG</div>
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: '"Poppins", sans-serif', letterSpacing: -0.3, marginTop: 2, color: t.mode === "dark" ? "#F8FAFC" : "#334155" }}>Pocket Newborn Guide</div>
+            <div style={{ fontSize: 12, color: t.text2, marginTop: 4 }}>Version 1.0</div>
+            <div style={{ width: 40, height: 2, borderRadius: 1, background: t.mode === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.15)", margin: "16px auto" }} />
             <div style={{ fontSize: 14, fontWeight: 600, fontFamily: '"Poppins", sans-serif' }}>Created by Tendo Kironde, MD</div>
             <div style={{ fontSize: 12, color: t.text2, marginTop: 8, lineHeight: 1.6 }}>
               For educational purposes only.<br />
@@ -1098,8 +1100,8 @@ export default function NewbornPocketPro() {
           </SlideTransition>
         </div>
         <div style={{
-          position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
-          width: "100%", maxWidth: 430,
+          position: "fixed", bottom: 0, left: 0, right: 0,
+          width: "100%",
           background: theme.tabBg, backdropFilter: "blur(25px) saturate(180%)", WebkitBackdropFilter: "blur(25px) saturate(180%)",
           borderTop: `0.5px solid ${theme.tabBorder}`,
           display: "flex", alignItems: "flex-end", justifyContent: "space-around",
