@@ -162,6 +162,7 @@ const SEARCH_INDEX = [
   { id: "sarnat", label: "Modified Sarnat", desc: "HIE hypoxic ischemic encephalopathy staging consciousness tone", section: "ICN" },
   { id: "cooling", label: "HIE", desc: "Cooling HIE protocol 33.5 degrees neuroprotection criteria", section: "ICN" },
   { id: "codemeds", label: "Code Meds", desc: "Neonatal code resuscitation epinephrine dopamine dobutamine phenobarbital acyclovir ampicillin gentamicin adenosine calcium surfactant", section: "ICN" },
+  { id: "hieprotocol", label: "HIE Protocol", desc: "Cooling eligibility criteria rewarming monitoring hypothermia neuroprotection", section: "ICN" },
 ];
 
 function SearchBar({ onNav }) {
@@ -1241,36 +1242,33 @@ function Hypothermia({ onBack }) {
 function NOWS({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="NOWS / ESC" onBack={onBack}>
-
-    <InfectionCard t={t} s={s} title="Eat, Sleep, Console (ESC) Assessment" reference="Grossman, M. et al. 'An Initiative to Improve the Quality of Care of Infants With Neonatal Abstinence Syndrome.' Pediatrics (2017)." bullets={[
-      <span><strong>ESC replaces Finnegan scoring</strong> as the preferred functional assessment for neonatal opioid withdrawal syndrome.</span>,
-      { text: <span><strong>Can the infant EAT?</strong></span>, sub: [
-        <span>Taking 1 ounce or more per feed (or breastfeeding effectively)</span>,
-        <span>Coordinated suck and swallow</span>,
-      ]},
-      { text: <span><strong>Can the infant SLEEP?</strong></span>, sub: [
-        <span>Sleeping at least 1 hour undisturbed between care times</span>,
-      ]},
-      { text: <span><strong>Can the infant be CONSOLED?</strong></span>, sub: [
-        <span>Consoled within 10 minutes using non-pharmacologic measures (swaddling, holding, rocking)</span>,
-      ]},
-      <span><strong>If all three are met:</strong> Continue non-pharmacologic care. If consistently unmet despite optimized supportive measures, consider pharmacologic therapy.</span>,
-    ]} />
-
-    <InfectionCard t={t} s={s} title="Non-Pharmacologic Management (First Line)" bullets={[
-      <span><strong>Environment:</strong> Low-light, low-stimulation room. Minimize handling and noise.</span>,
-      <span><strong>Comfort:</strong> Swaddling, skin-to-skin contact, pacifier, gentle rocking.</span>,
-      <span><strong>Feeding:</strong> Small, frequent feeds. Breastfeeding encouraged when not contraindicated (see Maternal Conditions — Substance Use).</span>,
-      <span><strong>Rooming-in:</strong> Keeping the infant with the parent improves outcomes and reduces length of stay.</span>,
-    ]} />
-
-    <InfectionCard t={t} s={s} title="Pharmacologic Therapy" reference="AAP Clinical Report: Neonatal Opioid Withdrawal Syndrome (2020)." bullets={[
-      <span><strong>First-line:</strong> Morphine sulfate 0.04 to 0.08 mg/kg orally every 3 to 4 hours.</span>,
-      <span><strong>Weaning:</strong> Once ESC criteria are consistently met for 24 to 48 hours, wean by 10 to 20% of the dose every 24 to 48 hours.</span>,
-      <span><strong>Adjunctive agents:</strong> Clonidine or phenobarbital may be added for refractory symptoms or polysubstance exposure.</span>,
-      <span><strong>Goal:</strong> Functional comfort (eating, sleeping, consolable) — not elimination of all withdrawal signs.</span>,
-    ]} />
-
+    <div style={{ ...s.info(t.acc), marginTop: 14 }}><strong>ESC replaces Finnegan scoring</strong> as the preferred functional assessment for neonatal opioid withdrawal syndrome.</div>
+    <div style={s.secT}>Eat, Sleep, Console (ESC) Assessment</div>
+    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>
+      <strong>Can the infant EAT?</strong><br/>
+      • Taking ≥1 oz per feed (or breastfeeding effectively)<br/>
+      • Coordinated suck and swallow<br/><br/>
+      <strong>Can the infant SLEEP?</strong><br/>
+      • Sleeping ≥1 hour undisturbed between care times<br/><br/>
+      <strong>Can the infant be CONSOLED?</strong><br/>
+      • Consoled within 10 minutes using non-pharmacologic measures (swaddling, holding, rocking)<br/><br/>
+      <strong>If all three are met:</strong> Continue non-pharmacologic care. If consistently unmet despite optimized supportive measures, consider pharmacologic therapy.
+    </div></div>
+    <div style={s.secT}>Non-Pharmacologic Management (First Line)</div>
+    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>
+      • <strong>Environment:</strong> Low-light, low-stimulation room. Minimize handling and noise.<br/>
+      • <strong>Comfort:</strong> Swaddling, skin-to-skin contact, pacifier, gentle rocking.<br/>
+      • <strong>Feeding:</strong> Small, frequent feeds. Breastfeeding encouraged when not contraindicated.<br/>
+      • <strong>Rooming-in:</strong> Keeping the infant with the parent improves outcomes and reduces length of stay.
+    </div></div>
+    <div style={s.secT}>Pharmacologic Therapy</div>
+    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>
+      • <strong>First-line:</strong> Morphine sulfate 0.04–0.08 mg/kg PO every 3–4 hours<br/>
+      • <strong>Weaning:</strong> Once ESC criteria met for 24–48 hrs, wean by 10–20% every 24–48 hrs<br/>
+      • <strong>Adjunctive agents:</strong> Clonidine or phenobarbital for refractory symptoms or polysubstance exposure<br/>
+      • <strong>Goal:</strong> Functional comfort (eating, sleeping, consolable) — not elimination of all withdrawal signs
+    </div></div>
+    <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, padding: "0 16px", fontStyle: "italic", lineHeight: 1.6 }}>Grossman, M. et al. Pediatrics (2017). AAP Clinical Report: Neonatal Opioid Withdrawal Syndrome (2020).</div>
   </Page>);
 }
 
@@ -1355,9 +1353,16 @@ function ExtracranialInjuries({ onBack }) {
 }
 
 function TherapeuticHypothermia({ onBack, onNav }) {
+  const t = useT();
+  return (<Page title="HIE" onBack={onBack}><div style={{ marginTop: 12 }}><MenuList items={[
+    { id: "sarnat", label: "Modified Sarnat Exam", desc: "HIE staging tool", icon: <Brain size={18} />, color: t.org },
+    { id: "hieprotocol", label: "HIE Protocol", desc: "Eligibility, cooling, monitoring", icon: <Snowflake size={18} />, color: t.acc },
+  ]} onTap={onNav} /></div></Page>);
+}
+
+function HIEProtocol({ onBack }) {
   const t = useT(); const s = useS();
-  return (<Page title="HIE" onBack={onBack}>
-    <div style={{ padding: "32px 16px 12px" }}><button onClick={() => onNav("sarnat")} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.org}12`, border: `1px solid ${t.org}30`, color: t.org, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><Brain size={16} /> Modified Sarnat Exam</button></div>
+  return (<Page title="HIE Protocol" onBack={onBack}>
     <div style={s.secT}>Eligibility Criteria</div>
     <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>
       <strong>Time window:</strong> Must be initiated within 6 hours of birth.<br/><br/>
@@ -1683,6 +1688,7 @@ export default function NewbornPocketPro() {
     if (p === "resuscmeds") return <ResuscMeds onBack={goBack} />;
     if (p === "codemeds") return <CodeMeds onBack={goBack} />;
     if (p === "cooling") return <TherapeuticHypothermia onBack={goBack} onNav={goTo} />;
+    if (p === "hieprotocol") return <HIEProtocol onBack={goBack} />;
     if (p === "vitals") return <VitalSigns onBack={goBack} />;
     if (p === "delivery") return <DeliverySection onBack={goBack} onNav={goTo} />;
     if (p === "nrp") return <NRPAlgorithm onBack={goBack} />;
