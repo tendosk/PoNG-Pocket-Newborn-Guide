@@ -151,7 +151,7 @@ const SEARCH_INDEX = [
   // Delivery sub-pages
   { id: "nrp", label: "NRP Algorithm", desc: "Neonatal resuscitation PPV chest compressions epinephrine MR SOPA", section: "Delivery" },
   { id: "equipment", label: "Equipment Estimates", desc: "ETT sizing depth blade laryngoscope weight-based", section: "Delivery" },
-  { id: "resuscmeds", label: "Resuscitation Meds", desc: "Epinephrine normal saline volume expansion emergency NRP", section: "Delivery" },
+  { id: "resuscmeds", label: "NRP Meds", desc: "Epinephrine normal saline volume expansion emergency NRP", section: "Delivery" },
   // Complications sub-pages
   { id: "hypothermia", label: "Hypothermia", desc: "Cold stress temperature prevention rewarming management", section: "Complications" },
   { id: "nows", label: "NOWS / ESC", desc: "Neonatal opioid withdrawal eat sleep console Finnegan", section: "ICN" },
@@ -160,7 +160,8 @@ const SEARCH_INDEX = [
   // ICN
   { id: "uvcuac", label: "UVC / UAC Calculator", desc: "Umbilical venous arterial catheter insertion depth line", section: "ICN" },
   { id: "sarnat", label: "Modified Sarnat", desc: "HIE hypoxic ischemic encephalopathy staging consciousness tone", section: "ICN" },
-  { id: "cooling", label: "Therapeutic Hypothermia", desc: "Cooling HIE protocol 33.5 degrees neuroprotection criteria", section: "ICN" },
+  { id: "cooling", label: "HIE", desc: "Cooling HIE protocol 33.5 degrees neuroprotection criteria", section: "ICN" },
+  { id: "codemeds", label: "Code Meds", desc: "Neonatal code resuscitation epinephrine dopamine dobutamine phenobarbital acyclovir ampicillin gentamicin adenosine calcium surfactant", section: "ICN" },
 ];
 
 function SearchBar({ onNav }) {
@@ -302,10 +303,15 @@ const SARNAT = [
   { name: "Autonomic System", n: 6, opts: [{ st: "Normal", s: 0, l: "Reactive pupils; Normal HR/RR" },{ st: "Mild", s: 1, l: "Dilated pupils; Tachycardia" },{ st: "Moderate", s: 2, l: "Constricted; Bradycardia" },{ st: "Severe", s: 3, l: "Non-reactive; Resp failure" }] },
 ];
 
-function SarnatTool({ onBack }) {
+function SarnatTool({ onBack, scrollRef }) {
   const t = useT(); const s = useS();
   const [scores, setScores] = useState({});
   const done = Object.keys(scores).length === 6;
+  const wasDone = useRef(false);
+  useEffect(() => {
+    if (done && !wasDone.current && scrollRef?.current) scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    wasDone.current = done;
+  }, [done]);
   const stColors = { 0: t.grn, 1: t.org, 2: t.org, 3: t.red };
   const stBgs = { 0: t.grnL, 1: t.orgL, 2: t.orgL, 3: t.redL };
   const getCounts = () => { const c = { Normal: 0, Mild: 0, Moderate: 0, Severe: 0 }; Object.entries(scores).forEach(([cat, v]) => { const f = SARNAT.find(x => x.name === cat)?.opts.find(o => o.s === v); if (f) { if (f.st.includes("Normal")) c.Normal++; else if (f.st.includes("Mild")) c.Mild++; else if (f.st.includes("Moderate")) c.Moderate++; else c.Severe++; } }); return c; };
@@ -516,7 +522,7 @@ function ResuscMeds({ onBack }) {
   const tdC = { ...s.tC, fontSize: s.sz(11), padding: "7px 5px", lineHeight: 1.4 };
   const tdH = { ...tdC, fontWeight: 700, textAlign: "left", paddingLeft: 8, background: t.mode === "dark" ? t.bg3 + "80" : "#F1F5F9" };
   return (
-    <Page title="Resuscitation Meds" onBack={onBack}>
+    <Page title="NRP Meds" onBack={onBack}>
       <div style={{ ...s.secT, marginTop: 14 }}>Epinephrine IV/IO</div>
       <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
         <div style={{ padding: "10px 14px", background: t.mode === "dark" ? t.red + "20" : "#FEF2F2", borderBottom: `1px solid ${t.border}` }}>
@@ -584,6 +590,90 @@ function ResuscMeds({ onBack }) {
         <div style={{ marginTop: 6, fontStyle: "italic" }}>These suggested epinephrine doses are based on a desire to simplify dosing for educational efficiency and do not endorse any particular dose within the recommended dosing range.</div>
         <div style={{ marginTop: 6, fontWeight: 600, color: t.text2 }}>Source: NRP 8th Edition Code Medications Card</div>
       </div>
+    </Page>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CODE MEDS (ICN — from Neonatal Code Meds Orderset)
+// ═══════════════════════════════════════════════════════════════════════
+function CodeMeds({ onBack }) {
+  const t = useT(); const s = useS();
+  return (
+    <Page title="Code Meds" onBack={onBack}>
+
+      <div style={{ ...s.info(t.acc), marginTop: 14 }}><strong>Source:</strong> Neonatal Code Resuscitation Meds Orderset</div>
+
+      {/* IV Fluids */}
+      <div style={s.secT}>IV Fluids</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
+        <div style={{ padding: "10px 14px", background: t.mode === "dark" ? t.acc + "20" : "#EFF6FF", borderBottom: `1px solid ${t.border}` }}>
+          <div style={{ fontSize: s.sz(12), fontWeight: 700, color: t.acc }}>D10 Bolus</div>
+          <div style={{ fontSize: s.sz(11), color: t.text2, marginTop: 2 }}>2 mL/kg IV one time for hypoglycemia</div>
+        </div>
+        <div style={{ padding: "10px 14px" }}>
+          <div style={{ fontSize: s.sz(12), fontWeight: 700, color: t.acc }}>Normal Saline Bolus</div>
+          <div style={{ fontSize: s.sz(11), color: t.text2, marginTop: 2 }}>10 mL/kg IV one time — infuse over 10 minutes</div>
+        </div>
+      </div>
+
+      {/* UAC/UVC Fluids */}
+      <div style={s.secT}>UAC / UVC Fluids</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
+        <div style={{ padding: "10px 14px", borderBottom: `1px solid ${t.border}` }}>
+          <div style={{ fontSize: s.sz(12), fontWeight: 700, color: t.tea }}>UAC Fluid</div>
+          <div style={{ fontSize: s.sz(11), color: t.text2, marginTop: 2 }}>NS with 1 unit heparin/mL — 1 mL/hr</div>
+        </div>
+        <div style={{ padding: "10px 14px" }}>
+          <div style={{ fontSize: s.sz(12), fontWeight: 700, color: t.tea }}>UVC Fluid</div>
+          <div style={{ fontSize: s.sz(11), color: t.text2, marginTop: 2 }}>D10W with 0.5 units heparin/mL — per TF of 80 mL/kg/day</div>
+        </div>
+      </div>
+
+      {/* Antibiotics */}
+      <div style={s.secT}>Antibiotics</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
+        {[
+          { name: "Acyclovir", dose: "20 mg/kg IV" },
+          { name: "Ampicillin", dose: "100 mg/kg/dose IV" },
+          { name: "Gentamicin", dose: "4 mg/kg/dose IV", sub: "GA ≥35 wk, PNA ≤7 days" },
+          { name: "Gentamicin", dose: "4.5 mg/kg/dose IV", sub: "GA 30–34 wk, PNA 0–7 days" },
+          { name: "Gentamicin", dose: "4 mg/kg/dose IV", sub: "GA ≤29 wk, PNA 0–7 days" },
+          { name: "Vancomycin", dose: "10 mg/kg/dose IV" },
+        ].map((med, i, arr) => (
+          <div key={i} style={{ padding: "10px 14px", borderBottom: i < arr.length - 1 ? `1px solid ${t.border}` : "none" }}>
+            <div style={{ fontSize: s.sz(12), fontWeight: 700, color: t.org }}>{med.name}</div>
+            <div style={{ fontSize: s.sz(11), color: t.text2, marginTop: 2 }}>{med.dose}</div>
+            {med.sub && <div style={{ fontSize: s.sz(10), color: t.text3, marginTop: 1, fontStyle: "italic" }}>{med.sub}</div>}
+          </div>
+        ))}
+      </div>
+
+      {/* Medications */}
+      <div style={s.secT}>Medications</div>
+      <div style={{ ...s.card, padding: 0, overflow: "hidden" }}>
+        {[
+          { name: "Adenosine", dose: "0.1 mg/kg IV rapid push (max 6 mg)", sub: "If ineffective: 0.2 mg/kg (max 12 mg)" },
+          { name: "Calcium Gluconate 10%", dose: "100–200 mg/kg/dose IV" },
+          { name: "Dobutamine", dose: "2–25 mcg/kg/min IV continuous infusion", sub: "Titrate to desired response" },
+          { name: "Dopamine", dose: "2–20 mcg/kg/min IV continuous infusion", sub: "Titrate to desired response" },
+          { name: "Epinephrine (0.1 mg/mL)", dose: "0.02 mg/kg IV", sub: "May repeat every 3–5 min. Flush with 3 mL NS." },
+          { name: "Glucose Gel (2.25 mL)", dose: "0.5 mL/kg buccal PRN hypoglycemia" },
+          { name: "Lorazepam", dose: "0.05–0.1 mg/kg slow IV push", sub: "May repeat based on clinical response" },
+          { name: "Naloxone", dose: "0.1 mg/kg IV (max 2 mg)", sub: "Repeat every 2–3 min if needed" },
+          { name: "Phenobarbital", dose: "Loading: 20 mg/kg IV", sub: "Additional 10 mg/kg q20–30 min PRN (max total 40 mg/kg)" },
+          { name: "Poractant alfa (Curosurf)", dose: "2.5 mL/kg intratracheal", sub: "Initial dose" },
+          { name: "Vecuronium", dose: "0.1 mg/kg IV", sub: "Maintenance: 0.03–0.15 mg/kg q1–2h PRN paralysis" },
+        ].map((med, i, arr) => (
+          <div key={i} style={{ padding: "10px 14px", borderBottom: i < arr.length - 1 ? `1px solid ${t.border}` : "none" }}>
+            <div style={{ fontSize: s.sz(12), fontWeight: 700, color: t.red }}>{med.name}</div>
+            <div style={{ fontSize: s.sz(11), color: t.text2, marginTop: 2 }}>{med.dose}</div>
+            {med.sub && <div style={{ fontSize: s.sz(10), color: t.text3, marginTop: 1, fontStyle: "italic" }}>{med.sub}</div>}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ textAlign: "center", padding: 16, fontSize: s.sz(9), color: t.text3 }}>Neonatal Code Meds Orderset · Updated 5/11/23</div>
     </Page>
   );
 }
@@ -1264,38 +1354,37 @@ function ExtracranialInjuries({ onBack }) {
   );
 }
 
-function TherapeuticHypothermia({ onBack }) {
+function TherapeuticHypothermia({ onBack, onNav }) {
   const t = useT(); const s = useS();
-  return (<Page title="Therapeutic Hypothermia" onBack={onBack}>
-
-    <InfectionCard t={t} s={s} title="Eligibility Criteria" reference="Shankaran, S. et al. 'Whole-Body Hypothermia for Neonates with Hypoxic-Ischemic Encephalopathy.' NEJM (2005). See also institutional cooling protocol." bullets={[
-      <span><strong>Time window:</strong> Must be initiated within 6 hours of birth.</span>,
-      { text: <span><strong>Step 1 — Perinatal criteria</strong> (at least one):</span>, sub: [
-        <span>Gestational age 36 weeks or greater and birth weight 1800 grams or greater</span>,
-        <span>Acute perinatal event (placental abruption, cord prolapse, uterine rupture)</span>,
-        <span>Cord or postnatal pH 7.0 or less, or base excess −16 or worse</span>,
-        <span>Apgar score 5 or less at 10 minutes, or continued need for ventilation at 10 minutes</span>,
-      ]},
-      { text: <span><strong>Step 2 — Neurologic exam</strong> (Modified Sarnat):</span>, sub: [
-        <span>Moderate or severe encephalopathy in 3 or more of 6 categories</span>,
-      ]},
-    ]} />
-
-    <InfectionCard t={t} s={s} title="Cooling Protocol" bullets={[
-      <span><strong>Target temperature:</strong> 33.5°C ± 0.5°C (whole-body cooling).</span>,
-      <span><strong>Duration:</strong> 72 hours of active cooling.</span>,
-      <span><strong>Rewarming:</strong> Increase by no more than 0.5°C per hour over 6 to 12 hours.</span>,
-      <span><strong>Continuous monitoring:</strong> Temperature, heart rate, blood pressure, and pulse oximetry throughout cooling and rewarming.</span>,
-    ]} />
-
-    <InfectionCard t={t} s={s} title="Monitoring During Cooling" bullets={[
-      <span><strong>Neuromonitoring:</strong> Continuous amplitude-integrated EEG (aEEG) or conventional EEG.</span>,
-      <span><strong>Labs:</strong> Arterial blood gas, glucose, electrolytes, liver function tests, coagulation studies, and lactate.</span>,
-      <span><strong>Nutrition:</strong> NPO during cooling. Provide total parenteral nutrition and IV fluids.</span>,
-      <span><strong>Seizure management:</strong> Phenobarbital is the first-line agent. Monitor for subclinical seizures on EEG.</span>,
-      <span><strong>MRI:</strong> Obtain brain MRI on day 4 to 7 of life for prognostic assessment.</span>,
-    ]} />
-
+  return (<Page title="HIE" onBack={onBack}>
+    <div style={{ padding: "32px 16px 12px" }}><button onClick={() => onNav("sarnat")} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.org}12`, border: `1px solid ${t.org}30`, color: t.org, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><Brain size={16} /> Modified Sarnat Exam</button></div>
+    <div style={s.secT}>Eligibility Criteria</div>
+    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>
+      <strong>Time window:</strong> Must be initiated within 6 hours of birth.<br/><br/>
+      <strong>Step 1 — Perinatal criteria</strong> (at least one):<br/>
+      • Gestational age ≥36 weeks and birth weight ≥1800 g<br/>
+      • Acute perinatal event (abruption, cord prolapse, uterine rupture)<br/>
+      • Cord or postnatal pH ≤7.0, or base excess −16 or worse<br/>
+      • Apgar ≤5 at 10 minutes, or continued need for ventilation at 10 min<br/><br/>
+      <strong>Step 2 — Neurologic exam</strong> (Modified Sarnat):<br/>
+      • Moderate or severe encephalopathy in ≥3 of 6 categories
+    </div></div>
+    <div style={s.secT}>Cooling Protocol</div>
+    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>
+      • <strong>Target temperature:</strong> 33.5°C ± 0.5°C (whole-body cooling)<br/>
+      • <strong>Duration:</strong> 72 hours of active cooling<br/>
+      • <strong>Rewarming:</strong> Increase by no more than 0.5°C/hr over 6–12 hours<br/>
+      • <strong>Continuous monitoring:</strong> Temperature, heart rate, blood pressure, and pulse oximetry throughout cooling and rewarming
+    </div></div>
+    <div style={s.secT}>Monitoring During Cooling</div>
+    <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>
+      • <strong>Neuromonitoring:</strong> Continuous aEEG or conventional EEG<br/>
+      • <strong>Labs:</strong> ABG, glucose, electrolytes, LFTs, coagulation studies, lactate<br/>
+      • <strong>Nutrition:</strong> NPO during cooling. Provide TPN and IV fluids.<br/>
+      • <strong>Seizure management:</strong> Phenobarbital is first-line. Monitor for subclinical seizures on EEG.<br/>
+      • <strong>MRI:</strong> Obtain brain MRI on day 4–7 of life for prognostic assessment
+    </div></div>
+    <div style={{ fontSize: s.sz(11), color: t.text3, marginTop: 10, padding: "0 16px", fontStyle: "italic", lineHeight: 1.6 }}>Shankaran, S. et al. "Whole-Body Hypothermia for Neonates with Hypoxic-Ischemic Encephalopathy." NEJM (2005). See also institutional cooling protocol.</div>
   </Page>);
 }
 
@@ -1465,19 +1554,18 @@ function DeliverySection({ onBack, onNav }) {
     { id: "apgar", label: "APGAR Calculator", desc: "1, 5, 10 min scores", icon: <ClipboardCheck size={18} />, color: t.acc },
     { id: "nrp", label: "NRP Algorithm", desc: "Resuscitation steps", icon: <Wind size={18} />, color: t.red },
     { id: "equipment", label: "Equipment", desc: "ETT sizing, blades", icon: <Wrench size={18} />, color: t.tea },
-    { id: "resuscmeds", label: "Resuscitation Meds", desc: "Epi, volume", icon: <Pill size={18} />, color: t.pur },
+    { id: "resuscmeds", label: "NRP Meds", desc: "Epi, volume, NS", icon: <Pill size={18} />, color: t.pur },
   ]} onTap={onNav} /></div></Page>);
 }
 
 function ICNHome({ onNav }) {
   const t = useT(); const s = useS();
   return (<div><div style={{ ...s.hdr, paddingTop: 92 }}><div style={s.hdrT}>ICN</div></div><div style={s.cnt}><SearchBar onNav={onNav} /><div style={{ marginTop: 14 }}><MenuList items={[
-    { id: "uvcuac", label: "UVC / UAC", desc: "Line depth calculator", icon: <Ruler size={18} />, color: t.red },
-    { id: "resuscmeds", label: "Resuscitation Meds", desc: "Emergency formulary", icon: <Pill size={18} />, color: t.pur },
-    { id: "sarnat", label: "Modified Sarnat", desc: "HIE staging", icon: <Brain size={18} />, color: t.org },
-    { id: "cooling", label: "Therapeutic Hypothermia", desc: "Cooling protocol", icon: <Snowflake size={18} />, color: t.acc },
     { id: "sepsis", label: "Early Onset Sepsis", desc: "Risk & management", icon: <Bug size={18} />, color: t.org },
+    { id: "cooling", label: "HIE", desc: "Cooling protocol", icon: <Snowflake size={18} />, color: t.acc },
     { id: "nows", label: "NOWS / ESC", desc: "Opioid withdrawal", icon: <Pill size={18} />, color: t.pur },
+    { id: "codemeds", label: "Code Meds", desc: "Neonatal code orderset", icon: <Pill size={18} />, color: t.pur },
+    { id: "uvcuac", label: "UVC / UAC", desc: "Line depth calculator", icon: <Ruler size={18} />, color: t.red },
   ]} onTap={onNav} /></div></div></div>);
 }
 
@@ -1559,6 +1647,7 @@ export default function NewbornPocketPro() {
   const isDark = themeMode === "dark" || (themeMode === "system" && systemDark);
   const theme = { ...(isDark ? dark : light), largeText };
   const s = mkS(theme);
+  useEffect(() => { document.body.style.backgroundColor = theme.bg; }, [theme.bg]);
 
   const currentStack = navStack[activeTab] || [];
   const currentPage = currentStack.length > 0 ? currentStack[currentStack.length - 1] : null;
@@ -1577,22 +1666,23 @@ export default function NewbornPocketPro() {
   }, [activeTab, currentPage]);
 
   const TABS = [
-    { id: "newborn", label: "Newborn", icon: <Baby size={24} strokeWidth={1.5} /> },
-    { id: "icn", label: "ICN", icon: <Stethoscope size={24} strokeWidth={1.5} /> },
-    { id: "links", label: "Links", icon: <Link2 size={24} strokeWidth={1.5} /> },
-    { id: "guidelines", label: "Guidelines", icon: <BookOpen size={24} strokeWidth={1.5} /> },
-    { id: "options", label: "Options", icon: <Settings size={24} strokeWidth={1.5} /> },
+    { id: "newborn", label: "Newborn", icon: <Baby size={22} strokeWidth={1.8} /> },
+    { id: "icn", label: "ICN", icon: <Stethoscope size={22} strokeWidth={1.8} /> },
+    { id: "links", label: "Links", icon: <Link2 size={22} strokeWidth={1.8} /> },
+    { id: "guidelines", label: "Guidelines", icon: <BookOpen size={22} strokeWidth={1.8} /> },
+    { id: "options", label: "Options", icon: <Settings size={22} strokeWidth={1.8} /> },
   ];
 
   const renderContent = () => {
     const p = currentPage;
     if (p === "apgar") return <ApgarTool onBack={goBack} scrollRef={scrollRef} />;
-    if (p === "sarnat") return <SarnatTool onBack={goBack} />;
+    if (p === "sarnat") return <SarnatTool onBack={goBack} scrollRef={scrollRef} />;
     if (p === "fenton") return <FentonTable onBack={goBack} />;
     if (p === "glucose") return <GlucoseProtocol onBack={goBack} />;
     if (p === "uvcuac") return <UvcUacCalc onBack={goBack} />;
     if (p === "resuscmeds") return <ResuscMeds onBack={goBack} />;
-    if (p === "cooling") return <TherapeuticHypothermia onBack={goBack} />;
+    if (p === "codemeds") return <CodeMeds onBack={goBack} />;
+    if (p === "cooling") return <TherapeuticHypothermia onBack={goBack} onNav={goTo} />;
     if (p === "vitals") return <VitalSigns onBack={goBack} />;
     if (p === "delivery") return <DeliverySection onBack={goBack} onNav={goTo} />;
     if (p === "nrp") return <NRPAlgorithm onBack={goBack} />;
@@ -1625,7 +1715,7 @@ export default function NewbornPocketPro() {
 
   return (
     <ThemeCtx.Provider value={theme}>
-      <div style={s.app}>
+      <div style={s.app} className={isDark ? "theme-dark" : ""}>
         <div ref={scrollRef} {...swipeHandlers} style={{ flex: 1, overflowY: "auto", overflowX: "hidden", WebkitOverflowScrolling: "touch", paddingBottom: 84 }}>
           <SlideTransition navKey={`${activeTab}-${currentPage || "home"}`} direction={navDirection}>
             {renderContent()}
@@ -1636,20 +1726,21 @@ export default function NewbornPocketPro() {
           width: "100%",
           background: theme.tabBg, backdropFilter: "blur(25px) saturate(180%)", WebkitBackdropFilter: "blur(25px) saturate(180%)",
           borderTop: `0.5px solid ${theme.tabBorder}`,
-          display: "flex", alignItems: "flex-end", justifyContent: "space-around",
-          paddingTop: 6, paddingBottom: "env(safe-area-inset-bottom, 20px)",
+          display: "flex", alignItems: "stretch", justifyContent: "space-around",
+          paddingTop: 4, paddingBottom: "env(safe-area-inset-bottom, 20px)",
           zIndex: 200,
         }}>
           {TABS.map(tab => {
             const active = activeTab === tab.id;
+            const inactiveColor = theme.mode === "dark" ? "#8E8E93" : "#999";
             return (
               <button key={tab.id} onClick={() => handleTab(tab.id)} style={{
-                display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
-                padding: "4px 0 2px", background: "none", border: "none", cursor: "pointer",
-                minWidth: 50, WebkitTapHighlightColor: "transparent",
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2,
+                padding: "6px 0 2px", background: "none", border: "none", cursor: "pointer",
+                minWidth: 50, flex: 1, WebkitTapHighlightColor: "transparent",
               }}>
-                <div style={{ color: active ? theme.acc : (theme.mode === "dark" ? "#8E8E93" : "#999"), display: "flex", marginBottom: 1 }}>{tab.icon}</div>
-                <div style={{ fontSize: s.sz(10), fontWeight: active ? 600 : 400, color: active ? theme.acc : (theme.mode === "dark" ? "#8E8E93" : "#999"), letterSpacing: 0 }}>{tab.label}</div>
+                <div style={{ color: active ? theme.acc : inactiveColor, display: "flex" }}>{tab.icon}</div>
+                <div style={{ fontSize: 10, fontWeight: 500, color: active ? theme.acc : inactiveColor, letterSpacing: 0.1, fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" }}>{tab.label}</div>
               </button>
             );
           })}
