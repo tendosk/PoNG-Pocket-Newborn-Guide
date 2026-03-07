@@ -375,6 +375,7 @@ function GlucoseProtocol({ onBack }) {
   return (
     <Page title="Blood Glucose Screening" onBack={onBack}>
       {showPdf !== null && <ImageViewer pages={["/glucose-protocol-p1.png", "/glucose-protocol-p2.png"]} activePage={showPdf} onClose={() => setShowPdf(null)} onPageChange={setShowPdf} />}
+      <div style={{ padding: "28px 16px 14px" }}><button onClick={() => setShowPdf(0)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.pur}12`, border: `1px solid ${t.pur}30`, color: t.pur, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Protocol PDF</button></div>
       <div style={{ display: "flex", gap: 6, padding: "14px 16px 4px" }}>
         {tabs.map(x => <button key={x.k} onClick={() => setTab(x.k)} style={{ ...s.pill, flex: 1, textAlign: "center", fontSize: s.sz(11), background: tab === x.k ? t.pur : t.surfaceSolid, color: tab === x.k ? "#fff" : t.text, boxShadow: tab === x.k ? `0 4px 12px ${t.pur}40` : "none" }}>{x.l}</button>)}
       </div>
@@ -384,7 +385,6 @@ function GlucoseProtocol({ onBack }) {
         <div style={s.secT}>Completion</div><div style={s.card}><div style={{ fontWeight: 700, fontSize: s.sz(12), color: t.pur, marginBottom: 4 }}>LGA / IDM:</div><div style={{ fontSize: s.sz(12) }}>≥ <strong>12 hrs</strong> AND 3 consecutive AC ≥ 45</div><div style={{ borderTop: `1px solid ${t.border}`, margin: "10px 0", paddingTop: 10 }}><div style={{ fontWeight: 700, fontSize: s.sz(12), color: t.pur, marginBottom: 4 }}>SGA / Late preterm:</div><div style={{ fontSize: s.sz(12) }}>≥ <strong>24 hrs</strong> AND 3 consecutive AC ≥ 45</div></div></div>
       </div>}
       {tab === "pathway" && <div>
-        <div style={{ padding: "32px 16px 12px" }}><button onClick={() => setShowPdf(0)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.pur}12`, border: `1px solid ${t.pur}30`, color: t.pur, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Protocol PDF</button></div>
         <div style={s.secT}>Path A: First Feed</div>
         <div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Feed within 1 hr of birth<br/>• POC glucose <strong>30 min AFTER</strong> feed (≤ 90 min)</div>
           <div style={{ marginTop: 10, padding: 12, background: t.redL, borderRadius: 12 }}><div style={{ fontWeight: 700, fontSize: s.sz(12), color: t.red }}>If &lt; 35:</div><div style={{ fontSize: s.sz(11), lineHeight: 1.7, marginTop: 3 }}>Glucose gel → feed → STS → notify MD → recheck 1 hr</div></div>
@@ -711,7 +711,7 @@ function ImageViewer({ pages, activePage, onClose, onPageChange }) {
       </div>}
       <div ref={containerRef} style={{ flex: 1, overflow: "hidden", touchAction: "none", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8px 20px" }}
         onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onClick={handleTap}>
-        <img src={pages[activePage]} alt={`Page ${activePage + 1}`} style={{ width: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 8, transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`, transition: scale === 1 ? "transform 0.2s ease" : "none", userSelect: "none", WebkitUserSelect: "none", pointerEvents: "none" }} draggable={false} />
+        <img src={`${import.meta.env.BASE_URL.replace(/\/$/,'')}${pages[activePage]}`} alt={`Page ${activePage + 1}`} style={{ width: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 8, transform: `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`, transition: scale === 1 ? "transform 0.2s ease" : "none", userSelect: "none", WebkitUserSelect: "none", pointerEvents: "none" }} draggable={false} />
       </div>
     </div>
   );
