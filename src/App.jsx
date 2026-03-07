@@ -6,7 +6,7 @@ import {
   Sun, Moon, Monitor, Eye, Ear, Milk, FileText, LineChart, HandHeart,
   HeartPulse, Droplets, CircleDot, Zap, BookOpen, Ribbon, PersonStanding,
   ClipboardCheck, TrendingUp, TestTubes, Waves, Sparkles, AlertTriangle,
-  Search, X, ChevronLeft
+  Search, X, ChevronLeft, Cross
 } from "lucide-react";
 
 // ─── Theme System ────────────────────────────────────────────────────
@@ -184,7 +184,7 @@ function SearchBar({ onNav }) {
   };
 
   return (
-    <div style={{ padding: "12px 16px 4px", position: "relative" }}>
+    <div style={{ padding: "14px 16px", position: "relative" }}>
       <div style={{
         display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
         background: t.mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)",
@@ -1565,11 +1565,11 @@ function DeliverySection({ onBack, onNav }) {
 
 function ICNHome({ onNav }) {
   const t = useT(); const s = useS();
-  return (<div><div style={{ ...s.hdr, paddingTop: 92 }}><div style={s.hdrT}>ICN</div></div><div style={s.cnt}><SearchBar onNav={onNav} /><div style={{ marginTop: 14 }}><MenuList items={[
+  return (<div><div style={{ ...s.hdr, paddingTop: 92 }}><div style={s.hdrT}>ICN</div></div><div style={s.cnt}><SearchBar onNav={onNav} /><div style={{ marginTop: 6 }}><MenuList items={[
     { id: "sepsis", label: "Early Onset Sepsis", desc: "Risk & management", icon: <Bug size={18} />, color: t.org },
     { id: "cooling", label: "HIE", desc: "Cooling protocol", icon: <Snowflake size={18} />, color: t.acc },
     { id: "nows", label: "NOWS / ESC", desc: "Opioid withdrawal", icon: <Pill size={18} />, color: t.pur },
-    { id: "codemeds", label: "Code Meds", desc: "Neonatal code orderset", icon: <Pill size={18} />, color: t.pur },
+    { id: "codemeds", label: "Code Meds", desc: "Neonatal code orderset", icon: <Cross size={18} />, color: t.red },
     { id: "uvcuac", label: "UVC / UAC", desc: "Line depth calculator", icon: <Ruler size={18} />, color: t.red },
   ]} onTap={onNav} /></div></div></div>);
 }
