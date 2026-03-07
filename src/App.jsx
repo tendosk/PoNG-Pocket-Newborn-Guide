@@ -359,7 +359,7 @@ function FentonTable({ onBack }) {
           </table>
         </div>
       </div>
-      <div style={{ padding: "16px 16px" }}><a href="https://peditools.org/fenton2025/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: t.grnL, color: t.grn, fontWeight: 600, fontSize: s.sz(13), textDecoration: "none" }}><TrendingUp size={16} /> Fenton 2025 Calculator — PediTools</a></div>
+      <div style={{ padding: "16px 16px" }}><a href="https://peditools.org/fenton2025/" target="_blank" rel="noopener noreferrer" className="btn-link" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.grn}12`, border: `1px solid ${t.grn}30`, color: t.grn, fontWeight: 600, fontSize: s.sz(13), textDecoration: "none" }}><TrendingUp size={16} /> Fenton 2025 Calculator — PediTools</a></div>
     </Page>
   );
 }
@@ -375,7 +375,7 @@ function GlucoseProtocol({ onBack }) {
   return (
     <Page title="Blood Glucose Screening" onBack={onBack}>
       {showPdf !== null && <ImageViewer pages={["/glucose-protocol-p1.png", "/glucose-protocol-p2.png"]} activePage={showPdf} onClose={() => setShowPdf(null)} onPageChange={setShowPdf} />}
-      <div style={{ padding: "28px 16px 14px" }}><button onClick={() => setShowPdf(0)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.pur}12`, border: `1px solid ${t.pur}30`, color: t.pur, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Protocol PDF</button></div>
+      <div style={{ padding: "28px 16px 14px" }}><button onClick={() => setShowPdf(0)} className="btn-link" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.pur}12`, border: `1px solid ${t.pur}30`, color: t.pur, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Protocol PDF</button></div>
       <div style={{ display: "flex", gap: 6, padding: "14px 16px 4px" }}>
         {tabs.map(x => <button key={x.k} onClick={() => setTab(x.k)} style={{ ...s.pill, flex: 1, textAlign: "center", fontSize: s.sz(11), background: tab === x.k ? t.pur : t.surfaceSolid, color: tab === x.k ? "#fff" : t.text, boxShadow: tab === x.k ? `0 4px 12px ${t.pur}40` : "none" }}>{x.l}</button>)}
       </div>
@@ -717,7 +717,7 @@ function ImageViewer({ pages, activePage, onClose, onPageChange }) {
   );
 }
 
-function InfectionCard({ title, bullets, reference, extraContent, t, s, defaultOpen }) {
+function InfectionCard({ title, bullets, reference, extraContent, topContent, t, s, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen || false);
   const liS = { fontSize: s.sz(12), lineHeight: 1.75, marginBottom: 6, paddingLeft: 4 };
   const subLiS = { fontSize: s.sz(11.5), lineHeight: 1.7, marginBottom: 4, paddingLeft: 2, color: t.text2 };
@@ -729,6 +729,7 @@ function InfectionCard({ title, bullets, reference, extraContent, t, s, defaultO
       </button>
       {open && (
         <div style={{ padding: "0 16px 14px", borderTop: `1px solid ${t.border}` }}>
+          {topContent}
           <ul style={{ margin: 0, paddingLeft: 18, paddingTop: 12 }}>
             {bullets.map((b, i) => <li key={i} style={liS}>{b.text || b}{b.sub && (
               <ul style={{ margin: "4px 0 2px", paddingLeft: 16, listStyleType: "disc" }}>
@@ -832,8 +833,8 @@ function MaternalInfections({ onBack, highlight }) {
         ]},
         <span><strong>Adequate maternal treatment:</strong> Completion of a stage-appropriate penicillin regimen at least 30 days before delivery, with a documented decline in titers.</span>,
         <span><strong>Infant follow-up:</strong> Repeat the infant's RPR or VDRL every 2 to 3 months after treatment until nonreactive. The infant's titers should decline by 3 months and be nonreactive by 6 months if adequately treated.</span>,
-      ]} extraContent={
-        <div style={{ padding: "32px 16px" }}><button onClick={() => setShowAlgo(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.tea}12`, border: `1px solid ${t.tea}30`, color: t.tea, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Syphilis Algorithm</button></div>
+      ]} topContent={
+        <div style={{ padding: "12px 0 4px" }}><button onClick={() => setShowAlgo(true)} className="btn-link" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.tea}12`, border: `1px solid ${t.tea}30`, color: t.tea, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Syphilis Algorithm</button></div>
       } />
 
     </Page>
@@ -989,7 +990,7 @@ function NeonatalMeds({ onBack, onNav }) {
       <span><strong>Route:</strong> Intramuscular injection is the preferred route. Oral vitamin K is not recommended due to unreliable absorption and inferior protection against late VKDB.</span>,
       <span><strong>If parents decline:</strong> A provider must personally review the refusal with the family. Provide the VKDB Fact Sheet (below), counsel on the risk of life-threatening bleeding including intracranial hemorrhage, and recommend reconsideration. Document the discussion and refusal in the medical record.</span>,
     ]} extraContent={
-      <div style={{ padding: "32px 16px 32px" }}><button onClick={() => setShowVkdb(0)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.org}12`, border: `1px solid ${t.org}30`, color: t.org, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View VKDB Fact Sheet</button></div>
+      <div style={{ padding: "32px 16px 32px" }}><button onClick={() => setShowVkdb(0)} className="btn-link" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.org}12`, border: `1px solid ${t.org}30`, color: t.org, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View VKDB Fact Sheet</button></div>
     } />
 
     <InfectionCard t={t} s={s} title="Hepatitis B Vaccine" reference="See AAP Red Book for the complete birth dose algorithm." bullets={[
@@ -1041,7 +1042,7 @@ function VoidingStooling({ onBack }) {
 function BilirubinSection({ onBack }) {
   const t = useT(); const s = useS();
   return (<Page title="Bilirubin" onBack={onBack}>
-    <div style={{ padding: "32px 16px 12px" }}><button onClick={() => window.open("https://bilitool.org/", "_blank")} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.ylw}12`, border: `1px solid ${t.ylw}30`, color: t.ylw, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> Open BiliTool</button></div>
+    <div style={{ padding: "32px 16px 12px" }}><button onClick={() => window.open("https://bilitool.org/", "_blank")} className="btn-link" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.ylw}12`, border: `1px solid ${t.ylw}30`, color: t.ylw, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> Open BiliTool</button></div>
     <div style={s.secT}>Risk Factors</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>• Jaundice in the first 24 hours (always pathologic)<br/>• ABO/Rh incompatibility + positive DAT<br/>• GA 35–36 weeks (immature hepatic conjugation)<br/>• Prior sibling with phototherapy<br/>• Cephalohematoma or significant bruising<br/>• Exclusive breastfeeding with suboptimal intake<br/>• East Asian race</div></div>
     <div style={s.secT}>Screening</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}>Predischarge TcB or TSB for all infants. Plot on the hour-specific Bhutani nomogram. Schedule follow-up based on risk zone — high-risk infants should be seen within 1 day of discharge.</div></div>
     <div style={s.secT}>Management</div><div style={s.card}><div style={{ fontSize: s.sz(12), lineHeight: 1.8 }}><strong>Phototherapy:</strong> Initiate when TSB reaches the hour-specific threshold for gestational age and risk factors.<br/><br/><strong>Exchange transfusion:</strong> Consider if TSB approaches exchange level despite intensive phototherapy, or if signs of acute bilirubin encephalopathy (lethargy, hypotonia, poor feeding, high-pitched cry).</div></div>
@@ -1221,7 +1222,7 @@ function ExtracranialInjuries({ onBack }) {
     <Page title="Extracranial Injuries" onBack={onBack}>
       {showImg && <ImageViewer pages={["/extracranial-injuries.jpg"]} activePage={0} onClose={() => setShowImg(false)} onPageChange={() => {}} />}
 
-      <div style={{ padding: "32px 16px 12px" }}><button onClick={() => setShowImg(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.red}12`, border: `1px solid ${t.red}30`, color: t.red, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Anatomy Diagram</button></div>
+      <div style={{ padding: "32px 16px 12px" }}><button onClick={() => setShowImg(true)} className="btn-link" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: 14, borderRadius: 14, background: `${t.red}12`, border: `1px solid ${t.red}30`, color: t.red, fontWeight: 600, fontSize: s.sz(13), cursor: "pointer" }}><FileText size={16} /> View Anatomy Diagram</button></div>
 
       <InfectionCard t={t} s={s} title="Caput Succedaneum" bullets={[
         <span><strong>What it is:</strong> Soft, diffuse swelling of the scalp caused by pressure against the dilating cervix during labor. It crosses suture lines.</span>,
